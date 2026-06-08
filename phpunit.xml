@@ -21,6 +21,8 @@
         <include>
             <directory suffix=".php">src</directory>
             <directory suffix=".php">main/src</directory>
+            <directory suffix=".php">php</directory>
+            <directory suffix=".php">diseño</directory>
         </include>
     </source>
 </phpunit>
