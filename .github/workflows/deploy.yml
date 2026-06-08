@@ -1,0 +1,86 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  PHP_VERSION: "8.3"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Package and Deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v3
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer
+
+      - name: Install dependencies (production)
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Create deployment package
+        run: |
+          rm -rf deployment || true
+          mkdir -p deployment
+          cp -r src deployment/
+          cp -r main/src deployment/
+          cp -r php deployment/
+          cp composer.json deployment/
+          cp composer.lock deployment/
+          cp README.md deployment/
+          tar -czf farmacia-hospital-${{ github.sha }}.tar.gz deployment/
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: farmacia-hospital-${{ github.sha }}.tar.gz
+
+      - name: Deploy to remote server
+        if: ${{ github.event_name == 'workflow_dispatch' && secrets.DEPLOY_HOST && secrets.DEPLOY_USER && secrets.DEPLOY_PRIVATE_KEY && (github.event.inputs.environment == 'staging' || (github.event.inputs.environment == 'production' && github.ref == 'refs/heads/main')) }}
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          source: "deployment/*"
+          target: ${{ github.event.inputs.environment == 'production' && secrets.DEPLOY_TARGET_PATH_PRODUCTION || secrets.DEPLOY_TARGET_PATH_STAGING }}
+          overwrite: true
+
+      - name: Deploy notification
+        run: |
+          echo "Deployment package created successfully"
+          echo "Package: farmacia-hospital-${{ github.sha }}.tar.gz"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ secrets.DEPLOY_HOST }}" ]; then
+            if [ "${{ github.event.inputs.environment }}" = "production" ] && [ "${{ github.ref }}" != 'refs/heads/main' ]; then
+              echo "Remote deployment skipped because production deploy must run from main branch."
+            else
+              echo "Remote deployment attempted to ${{ secrets.DEPLOY_HOST }}"
+            fi
+          else
+            echo "Remote deployment skipped. Configure DEPLOY_HOST, DEPLOY_USER, DEPLOY_PRIVATE_KEY, and DEPLOY_TARGET_PATH_STAGING/DEPLOY_TARGET_PATH_PRODUCTION secrets to enable it."
+          fi

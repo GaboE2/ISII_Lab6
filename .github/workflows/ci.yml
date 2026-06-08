@@ -1,0 +1,268 @@
+name: CI/CD Pipeline - Farmacia Hospital
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+  security-events: write
+
+env:
+  PHP_VERSION: "8.3"
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v3
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mysqli, pdo, pdo_mysql, xdebug
+          tools: composer, phpunit
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Run PHP Linting
+        run: |
+          find src tests -name "*.php" -type f -exec php -l {} \;
+        continue-on-error: true
+
+      - name: Prepare JUnit results directory
+        run: mkdir -p junit
+
+      - name: Run Unit Tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --testsuite Unit --testdox --log-junit junit/unit.xml
+
+      - name: Run Integration Tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --testsuite Integration --testdox --log-junit junit/integration.xml
+
+      - name: Run Functional Tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --testsuite Functional --testdox --log-junit junit/functional.xml
+
+      - name: Run NonFunctional Tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --testsuite NonFunctional --testdox --log-junit junit/nonfunctional.xml
+
+      - name: Upload PHPUnit results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: junit/
+
+      - name: Run All Tests with Coverage Report
+        run: vendor/bin/phpunit --configuration phpunit.xml --coverage-html coverage-report --coverage-clover coverage.xml
+
+      - name: Validate minimum coverage
+        run: |
+          THRESHOLD=70
+          if [ ! -f coverage.xml ]; then
+            echo "coverage.xml not found"
+            exit 1
+          fi
+          COVERAGE=$(python3 -c "import xml.etree.ElementTree as ET; root = ET.parse('coverage.xml').getroot(); print(int(float(root.attrib.get('line-rate'))*100))")
+          echo "Line coverage: ${COVERAGE}%"
+          if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
+            echo "Coverage threshold failed: ${COVERAGE}% < ${THRESHOLD}%"
+            exit 1
+          fi
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage-report/index.html
+          flags: unittests
+          name: codecov-umbrella
+        continue-on-error: true
+
+      - name: Archive coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: coverage-report/
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v3
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Composer validation
+        run: composer validate
+
+      - name: Check for security vulnerabilities with Composer
+        run: composer audit
+        continue-on-error: true
+
+  codeql-analysis:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: php
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v2
+
+  issue-management:
+    name: Issue Management
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality, codeql-analysis]
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Create or update build/test failure issue
+        if: ${{ needs.build-and-test.result == 'failure' }}
+        uses: peter-evans/create-issue@v6
+        with:
+          title: CI build/test failure in ${{ github.repository }} on ${{ github.ref_name }}
+          body: |
+            ## Build/Test Failure
+
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** `${{ github.sha }}`
+            **Workflow:** ${{ github.workflow }}
+
+            **Build and Test:** ${{ needs.build-and-test.result }}
+            **Run URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Please investigate the failing tests or errors in the build pipeline.
+          labels: ci-failure, automation
+          existing-issue: update
+          issue-state: open
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update quality failure issue
+        if: ${{ needs.code-quality.result == 'failure' }}
+        uses: peter-evans/create-issue@v6
+        with:
+          title: Code quality failure in ${{ github.repository }} on ${{ github.ref_name }}
+          body: |
+            ## Code Quality Failure
+
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** `${{ github.sha }}`
+            **Workflow:** ${{ github.workflow }}
+
+            **Code Quality:** ${{ needs.code-quality.result }}
+            **Run URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Please investigate the reported composer or code quality issues.
+          labels: quality-failure, automation
+          existing-issue: update
+          issue-state: open
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update security failure issue
+        if: ${{ needs.codeql-analysis.result == 'failure' }}
+        uses: peter-evans/create-issue@v6
+        with:
+          title: Security analysis failure in ${{ github.repository }} on ${{ github.ref_name }}
+          body: |
+            ## Security Analysis Failure
+
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** `${{ github.sha }}`
+            **Workflow:** ${{ github.workflow }}
+
+            **Security Analysis:** ${{ needs.codeql-analysis.result }}
+            **Run URL:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Please investigate the CodeQL findings and fix any security issues.
+          labels: security-failure, automation
+          existing-issue: update
+          issue-state: open
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [build-and-test, code-quality, codeql-analysis]
+
+    steps:
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+        continue-on-error: true
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports
+        continue-on-error: true
+
+      - name: Summary of test execution
+        run: |
+          if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+            echo "## Test Execution Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo " **Unit Tests**: ${{ needs.build-and-test.result }}" >> "$GITHUB_STEP_SUMMARY"
+            echo " **Integration Tests**: ${{ needs.build-and-test.result }}" >> "$GITHUB_STEP_SUMMARY"
+            echo " **Functional Tests**: ${{ needs.build-and-test.result }}" >> "$GITHUB_STEP_SUMMARY"
+            echo " **NonFunctional Tests**: ${{ needs.build-and-test.result }}" >> "$GITHUB_STEP_SUMMARY"
+            echo " **Code Quality Checks**: ${{ needs.code-quality.result }}" >> "$GITHUB_STEP_SUMMARY"
+            echo " **Security Analysis**: ${{ needs.codeql-analysis.result }}" >> "$GITHUB_STEP_SUMMARY"
+            echo " **Coverage Report**: downloaded" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "GITHUB_STEP_SUMMARY not available"
+          fi

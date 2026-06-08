@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- SQL XML created by WWW SQL Designer, https://github.com/ondras/wwwsqldesigner/ -->
+<!-- Active URL: https://sql.toad.cz/? -->
+<sql>
+<datatypes db="mysql">
+	<group label="Numeric" color="rgb(238,238,170)">
+		<type label="Integer" length="0" sql="INTEGER" quote=""/>
+	 	<type label="TINYINT" length="0" sql="TINYINT" quote=""/>
+	 	<type label="SMALLINT" length="0" sql="SMALLINT" quote=""/>
+	 	<type label="MEDIUMINT" length="0" sql="MEDIUMINT" quote=""/>
+	 	<type label="INT" length="0" sql="INT" quote=""/>
+		<type label="BIGINT" length="0" sql="BIGINT" quote=""/>
+		<type label="Decimal" length="1" sql="DECIMAL" re="DEC" quote=""/>
+		<type label="Single precision" length="0" sql="FLOAT" quote=""/>
+		<type label="Double precision" length="0" sql="DOUBLE" re="DOUBLE" quote=""/>
+	</group>
+
+	<group label="Character" color="rgb(255,200,200)">
+		<type label="Char" length="1" sql="CHAR" quote="'"/>
+		<type label="Varchar" length="1" sql="VARCHAR" quote="'"/>
+		<type label="Text" length="0" sql="MEDIUMTEXT" re="TEXT" quote="'"/>
+		<type label="Binary" length="1" sql="BINARY" quote="'"/>
+		<type label="Varbinary" length="1" sql="VARBINARY" quote="'"/>
+		<type label="BLOB" length="0" sql="BLOB" re="BLOB" quote="'"/>
+	</group>
+
+	<group label="Date &amp; Time" color="rgb(200,255,200)">
+		<type label="Date" length="0" sql="DATE" quote="'"/>
+		<type label="Time" length="0" sql="TIME" quote="'"/>
+		<type label="Datetime" length="0" sql="DATETIME" quote="'"/>
+		<type label="Year" length="0" sql="YEAR" quote=""/>
+		<type label="Timestamp" length="0" sql="TIMESTAMP" quote="'"/>
+	</group>
+	
+	<group label="Miscellaneous" color="rgb(200,200,255)">
+		<type label="ENUM" length="1" sql="ENUM" quote=""/>
+		<type label="SET" length="1" sql="SET" quote=""/>
+		<type label="Bit" length="0" sql="bit" quote=""/>
+	</group>
+</datatypes><table x="647" y="181" name="Departamento">
+<row name="ID_Departamento" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_Departamento" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Edificio" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Presupuesto" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Departamento</part>
+</key>
+</table>
+<table x="1059" y="401" name="Doctor">
+<row name="ID_Doctor" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_doctor" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Primer_apellido_doctor" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Segundo_apellido_doctor" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Especialidad" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Edad_Doctor" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><comment>Atributo Derivado de Fecha_naciemiento_doctor</comment>
+</row>
+<row name="Fecha_nacimiento_doctor" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="ID_Departamento" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Departamento" row="ID_Departamento" />
+</row>
+<key type="PRIMARY" name="">
+<part>ID_Doctor</part>
+</key>
+</table>
+<table x="311" y="399" name="Paciente">
+<row name="ID_Paciente" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_paciente" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Primer_apellido_paciente" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Segundo_apellido_paciente" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Edad_paciente" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><comment>Atributo derivado de Fecha_nacimiento_paciente</comment>
+</row>
+<row name="Fecha_nacimiento_paciente" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="Dirección_paciente" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="ID_Departamento" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Departamento" row="ID_Departamento" />
+</row>
+<key type="PRIMARY" name="">
+<part>ID_Paciente</part>
+</key>
+</table>
+<table x="92" y="556" name="Telefono">
+<row name="ID_Paciente" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Paciente" row="ID_Paciente" />
+</row>
+<row name="Telefono_paciente" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>Telefono_paciente</part>
+<part>ID_Paciente</part>
+</key>
+</table>
+<table x="1278" y="748" name="Medicamento">
+<row name="ID_Medicamento" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_medicamento" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="ID_Clase_medicamentos" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Clase_Medicamentos" row="ID_Clase_medicamentos" />
+</row>
+<row name="Clase_medicamento" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="fecha_vencimiento" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="stock_medicamento" null="1" autoincrement="0">
+<datatype>INT</datatype>
+<default>NULL</default></row>
+<row name="Precio_medicamento" null="1" autoincrement="0">
+<datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Medicamento</part>
+</key>
+</table>
+<table x="1261" y="636" name="Clase_Medicamentos">
+<row name="ID_Clase_medicamentos" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_clase_medicamentos" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Clase_medicamentos</part>
+</key>
+</table>
+<table x="333" y="135" name="Suplemento">
+<row name="ID_Suplemento" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_suplemento" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Stock_suplemento" null="1" autoincrement="0">
+<datatype>INT</datatype>
+<default>NULL</default></row>
+<row name="Precio_suplemento" null="1" autoincrement="0">
+<datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<row name="ID_Departamento" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Departamento" row="ID_Departamento" />
+</row>
+<key type="PRIMARY" name="">
+<part>ID_Suplemento</part>
+</key>
+</table>
+<table x="652" y="359" name="Preinscripción">
+<row name="ID_Preinscripción" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Fecha_emisión" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="ID_Paciente" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Paciente" row="ID_Paciente" />
+</row>
+<row name="ID_Doctor" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Doctor" row="ID_Doctor" />
+</row>
+<row name="ID_Medicamento" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Medicamento" row="ID_Medicamento" />
+</row>
+<row name="Dosis" null="1" autoincrement="0">
+<datatype>INT</datatype>
+<default>NULL</default></row>
+<row name="Instrucciones" null="1" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Preinscripción</part>
+<part>ID_Doctor</part>
+<part>ID_Paciente</part>
+<part>ID_Medicamento</part>
+</key>
+</table>
+<table x="664" y="575" name="Consulta">
+<row name="ID_Consulta" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Fecha_consulta" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="ID_Paciente" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Paciente" row="ID_Paciente" />
+</row>
+<row name="ID_Doctor" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Doctor" row="ID_Doctor" />
+</row>
+<row name="Motivo_Consulta" null="1" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+<default>NULL</default></row>
+<row name="Diagnóstico" null="1" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Consulta</part>
+<part>ID_Doctor</part>
+<part>ID_Paciente</part>
+</key>
+</table>
+<table x="100" y="319" name="Historial_Médico">
+<row name="ID_Historial_médico" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ID_Paciente" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Paciente" row="ID_Paciente" />
+</row>
+<row name="Detalles_historial" null="1" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+<default>NULL</default></row>
+<row name="Fecha_registro" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Historial_médico</part>
+</key>
+</table>
+<table x="951" y="759" name="Receta">
+<row name="ID_Receta" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ID_Consulta" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Consulta" row="ID_Consulta" />
+</row>
+<row name="ID_Medicamento" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Medicamento" row="ID_Medicamento" />
+</row>
+<row name="Cantidad_preinscrita" null="1" autoincrement="0">
+<datatype>INT</datatype>
+<default>NULL</default></row>
+<row name="Fecha_receta" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Receta</part>
+<part>ID_Consulta</part>
+<part>ID_Medicamento</part>
+</key>
+</table>
+<table x="668" y="770" name="Cita">
+<row name="ID_Cita" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Fecha_cita" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="Hora_inicio_cita" null="1" autoincrement="0">
+<datatype>TIME</datatype>
+<default>NULL</default></row>
+<row name="Hora_fin_cita" null="1" autoincrement="0">
+<datatype>TIME</datatype>
+<default>NULL</default></row>
+<row name="ID_Paciente" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Paciente" row="ID_Paciente" />
+</row>
+<row name="ID_Doctor" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Doctor" row="ID_Doctor" />
+</row>
+<row name="Especialidad" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Cita</part>
+<part>ID_Paciente</part>
+<part>ID_Doctor</part>
+</key>
+</table>
+<table x="1352" y="60" name="Proveedor">
+<row name="ID_Proveedor" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Nombre_proveedor" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Contacto_proveedor" null="1" autoincrement="0">
+<datatype>INT</datatype>
+<default>NULL</default></row>
+<row name="Direccion_proveedor" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Proveedor</part>
+</key>
+</table>
+<table x="1622" y="373" name="Pedido">
+<row name="ID_Pedido" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ID_Proveedor" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Proveedor" row="ID_Proveedor" />
+</row>
+<row name="Fecha_pedido" null="1" autoincrement="0">
+<datatype>DATE</datatype>
+<default>NULL</default></row>
+<row name="ID_Medicamento" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Medicamento" row="ID_Medicamento" />
+</row>
+<row name="Cantidad" null="1" autoincrement="0">
+<datatype>INT</datatype>
+<default>NULL</default></row>
+<row name="Estado_pedido" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Pedido</part>
+<part>ID_Medicamento</part>
+<part>ID_Proveedor</part>
+</key>
+</table>
+<table x="1353" y="337" name="Horarios">
+<row name="ID_Horarios" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="Dia" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="Hora_inicio_horario" null="1" autoincrement="0">
+<datatype>TIME</datatype>
+<default>NULL</default></row>
+<row name="Hora_fin_horario" null="1" autoincrement="0">
+<datatype>TIME</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>ID_Horarios</part>
+</key>
+</table>
+<table x="1039" y="166" name="tiene">
+<row name="ID_tiene" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ID_Horarios_Horarios" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Horarios" row="ID_Horarios" />
+</row>
+<row name="ID_Doctor_Doctor" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="Doctor" row="ID_Doctor" />
+</row>
+<key type="PRIMARY" name="">
+<part>ID_tiene</part>
+</key>
+</table>
+</sql>

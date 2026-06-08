@@ -1,0 +1,52 @@
+name: Scheduled Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Runs daily at 2:00 AM UTC
+  workflow_dispatch:
+
+env:
+  PHP_VERSION: "8.3"
+
+jobs:
+  nightly-tests:
+    name: Nightly Test Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v3
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mysqli, pdo, pdo_mysql, xdebug
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run comprehensive tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --coverage-html coverage-nightly
+
+      - name: Archive nightly coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-coverage
+          path: coverage-nightly/
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+
+      - name: Send notification
+        if: always()
+        run: echo " Nightly tests completed - $(date)" >> /tmp/nightly.log

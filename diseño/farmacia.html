@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>UCSP</title>
+   <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="style1.css">
+   <script src="script.js" defer></script>
+</head>
+<body>   
+<header>
+    <div class="container-hero">
+        <div class="container hero">
+            <div class="customer-support">
+                <i class="fa-solid fa-headset"></i>
+                <div class="content-customer-support">
+                    <span class="text">Soporte al cliente</span>
+                    <span class="number">123-456-7890</span>
+                </div>
+            </div>
+
+            <div class="container-logo">
+                <h1 class="logo"><a href="/">UCSP</a></h1>
+                <i class="fa-solid fa-hospital"></i>
+                <h1 class="logo"><a href="/">FARMACIA</a></h1>
+            </div>
+
+            <div class="container-icons">
+                <div class="container-user">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="user-panel" style="display: none;">
+                        <div class="user-panel-content">
+                            <button class="close-user-btn">&times;</button>
+                            <ul>
+                                <li><a href="login.html">Ingresar</a></li>
+                                <li><a href="signup.html">Crear cuenta</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-cart">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <div class="content-shopping-cart">
+                        <span class="number">(0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-panel">
+                <div class="cart-panel-content">
+                    <button class="close-cart-btn">&times;</button>
+                    <h2>Carrito:</h2>
+                    <div class="cart-items"></div>
+                    <div class="cart-summary">
+                        <p class="cart-quantity">Cantidad: <span class="total-quantity">0</span></p>
+                        <p class="cart-total">Subtotal: S/ <span class="total-price">0.00</span></p>
+                        <button class="checkout-btn">Finalizar pedido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>	
+
+        <div class="container__menu">
+            <div class="menu">
+                <input type="checkbox" id="check__menu">
+                <label for="check__menu" id="label__check">
+                    <i class="fas fa-bars icon__menu"></i>
+                </label>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="#" id="selected"></a></li>
+                        <li><a href="#">Paciente</a>
+                            <ul>
+                                <li><a href="registro_paciente.html">Perfil</a></li>
+                                <li><a href="historial_medico.html">Historial Medico</a></li>   
+                                <li><a href="citapaciente.html">Cita</a></li>
+                                <li><a href="consultapaciente.html">Consulta</a></li>
+                                <li><a href="recetapaciente.html">Receta</a></li>
+                            </ul>
+                        <li><a href="#">Medico</a>
+                            <ul>
+                                <li><a href="perfildoctor.html">Perfil</a></li>
+                                <li><a href="consultadoctor.html">Consulta</a></li>
+                                <li><a href="citadoctor.html">Cita</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="farmacia.html">Farmacia</a></li>
+                        <li><a href="horario.html">Horario</a>    
+                    </ul>
+                </nav>
+            </div>
+        </div>
+</header> 
+
+<section class="container top-categories">
+    <h1 class="heading-1"></h1>
+    <div class="container-categories">
+        <div class="card-category category-med">
+            <p>Medicamentos</p>
+        </div>
+        <div class="card-category category-sup">
+            <p>Suplementos</p>
+        </div>
+    </div>
+</section>
+
+
+<div class="container">
+    <div class="products-container">
+        <div class="product" data-name="p-1">
+            <img src="img/im1.png" alt="">
+            <h3>Paracetamol</h3>
+            <h3>ID: 001</h3>
+            <div class="price">S/ 10.00</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="1">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-2">
+            <img src="img/im2.png" alt="">
+            <h3>Amoxicilina</h3>
+            <h3>ID: 002</h3>
+            <div class="price">S/ 12.90</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="2">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-3">
+            <img src="img/im3.png" alt="">
+            <h3>Ibuprofeno</h3>
+            <h3>ID: 003</h3>
+            <div class="price">S/ 9.00</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="3">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-4">
+            <img src="img/im4.png" alt="">
+            <h3>Omeprazol</h3>
+            <h3>ID: 004</h3>
+            <div class="price">S/ 16.00</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="4">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-5">
+            <img src="img/im5.png" alt="">
+            <h3>Loratadina</h3>
+            <h3>ID: 005</h3>
+            <div class="price">S/ 4.00</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="5">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-6">
+            <img src="img/im6.png" alt="">
+            <h3>Metformina</h3>
+            <h3>ID: 006</h3>
+            <div class="price">S/ 24.50</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="6">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-7">
+            <img src="img/im7.png" alt="">
+            <h3>Enalapril</h3>
+            <h3>ID: 007</h3>
+            <div class="price">S/ 6.00</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="7">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-8">
+            <img src="img/im8.png" alt="">
+            <h3>Simvastatina</h3>
+            <h3>ID: 008</h3>
+            <div class="price">S/ 37.50</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="8">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-9">
+            <img src="img/im9.png" alt="">
+            <h3>Furosemida</h3>
+            <h3>ID: 009</h3>
+            <div class="price">S/ 10.00</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="9">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-10">
+            <img src="img/im10.png" alt="">
+            <h3>Clopidrogel</h3>
+            <h3>ID: 010</h3>
+            <div class="price">S/ 15.30</div>
+            <form action="reduce_stock.php" method="POST">
+                <input type="hidden" name="product_id" value="10">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-11">
+            <img src="img/im11.jpg" alt="">
+            <h3>Vitamina D</h3>
+            <div class="price">S/ 50.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="101">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-12">
+            <img src="img/im12.jpg" alt="">
+            <h3>Colageno</h3>
+            <div class="price">S/ 34.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="105">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-13">
+            <img src="img/im13.jpg" alt="">
+            <h3>Omega-3</h3>
+            <div class="price">S/ 73.80</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="205">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-14">
+            <img src="img/im14.jpg" alt="">
+            <h3>Multivitaminico</h3>
+            <div class="price">S/ 75.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="309">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-15">
+            <img src="img/im15.jpg" alt="">
+            <h3>Calcio</h3>
+            <div class="price">S/ 47.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="413">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-16">
+            <img src="img/im16.jpg" alt="">
+            <h3>Magnesio</h3>
+            <div class="price">S/ 94.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="527">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-17">
+            <img src="img/im17.jpg" alt="">
+            <h3>Zinc</h3>
+            <div class="price">S/ 39.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="632">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-18">
+            <img src="img/im18.jpg" alt="">
+            <h3>Vitamina B12</h3>
+            <div class="price">S/ 59.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="748">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-19">
+            <img src="img/im19.jpg" alt="">
+            <h3>Probioticos</h3>
+            <div class="price">S/ 93.90</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="859">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+
+        <div class="product" data-name="p-20">
+            <img src="img/im20.jpg" alt="">
+            <h3>Vitamina C</h3>
+            <div class="price">S/ 29.80</div>
+            <form action="reduce_stock_suplemento.php" method="POST">
+                <input type="hidden" name="product_id" value="960">
+                <button type="submit" class="cart">Agregar al carrito</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+ <div class="products-preview">
+
+    <div class="preview" data-target="p-1">
+        <i class="fas fa-times"></i>
+        <img src="img/im1.png" alt="">
+        <h3>Paracetamol</h3>
+        <p class="class">Clase: Analgesico</p>
+        <p class="exp-date">Exp.Date: 31-12-2025</p>
+        <p class="stock">Stock: 100</p>
+        <div class="price">S/ 10.00</div>
+        <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+   </div>
+
+   <div class="preview" data-target="p-2">
+        <i class="fas fa-times"></i>
+        <img src="img/im2.png" alt="">
+        <h3>Amoxicilina</h3>
+        <p class="class">Clase: Antibiotico</p>
+        <p class="exp-date">Exp.Date: 20-08-2024</p>
+        <p class="stock">Stock: 200</p>
+        <div class="price">S/ 12.90</div>
+        <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-3">
+        <i class="fas fa-times"></i>
+        <img src="img/im3.png" alt="">
+        <h3>Ibuprofeno</h3>
+        <p class="class">Clase: Antiinflamatorio</p>
+        <p class="exp-date">15-06-2025</p>
+        <p class="stock">150</p>
+        <div class="price">S/ 9.00</div>
+        <div class="buttons">
+        <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-4">
+        <i class="fas fa-times"></i>
+        <img src="img/im4.png" alt="">
+        <h3>Omeprazol</h3>
+        <p class="class">Clase: Antiulceroso</p>
+        <p class="exp-date">05-11-2024</p>
+        <p class="stock">180</p>
+        <div class="price">S/ 16.00</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-5">
+        <i class="fas fa-times"></i>
+        <img src="img/im5.png" alt="">
+        <h3>Loratadina</h3>
+        <p class="class">Clase: Antihistaminico</p>
+        <p class="exp-date">10-03-2025</p>
+        <p class="stock">120</p>
+        <div class="price">S/ 4.00</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-6">
+        <i class="fas fa-times"></i>
+        <img src="img/im6.png" alt="">
+        <h3>Metformina</h3>
+        <p class="class">Clase: Antidiabetico</p>
+        <p class="exp-date">22-07-2024</p>
+        <p class="stock">300</p>
+        <div class="price">S/ 24.50</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-7">
+        <i class="fas fa-times"></i>
+        <img src="img/im7.png" alt="">
+        <h3>Enalapril</h3>
+        <p class="class">Clase: Antihipertensivo</p>
+        <p class="exp-date">30-01-2025</p>
+        <p class="stock">133</p>
+        <div class="price">S/ 6.00</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-8">
+        <i class="fas fa-times"></i>
+        <img src="img/im8.png" alt="">
+        <h3>Simvastatina</h3>
+        <p class="class">Clase: Hipolipemiante</p>
+        <p class="exp-date">14-10-2024</p>
+        <p class="stock">160</p>
+        <div class="price">S/ 37.50</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-9">
+        <i class="fas fa-times"></i>
+        <img src="img/im9.png" alt="">
+        <h3>Furosemida</h3>
+        <p class="class">Clase: Diuretico</p>
+        <p class="exp-date">30-09-2025</p>
+        <p class="stock">90</p>
+        <div class="price">S/ 10.00</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-10">
+        <i class="fas fa-times"></i>
+        <img src="img/im10.png" alt="">
+        <h3>Clopidrogel</h3>
+        <p class="class">Clase: Antiplaquetario</p>
+        <p class="exp-date">15-12-2024</p>
+        <p class="stock">75</p>
+        <div class="price">S/ 15.30</div>
+        <div class="buttons">
+           <a href="#" class="cart">Agregar al carrito</a>
+        </div>
+    </div>
+
+    <div class="preview" data-target="p-11">
+         <i class="fas fa-times"></i>
+         <img src="img/im11.jpg" alt="">
+         <h3>Vitamina D</h3>
+         <p class="class">ID: S011</p>
+         <p class="stock">250</p>
+         <div class="price">S/ 50.90</div>
+         <div class="buttons">
+             <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+    </div>
+ 
+    <div class="preview" data-target="p-12">
+         <i class="fas fa-times"></i>
+         <img src="img/im12.jpg" alt="">
+         <h3>Omega-3</h3>
+         <p class="class">ID: S012</p>
+         <p class="stock">200</p>
+         <div class="price">S/ 73.80</div>
+         <div class="buttons">
+             <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-13">
+         <i class="fas fa-times"></i>
+         <img src="img/im13.jpg" alt="">
+         <h3>Multivitaminico</h3>
+         <p class="class">ID: S013</p>
+         <p class="stock">200</p>
+         <div class="price">S/ 75.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-14">
+         <i class="fas fa-times"></i>
+         <img src="img/im14.jpg" alt="">
+         <h3>Calcio</h3>
+         <p class="class">ID: S014</p>
+         <p class="stock">180</p>
+         <div class="price">S/ 47.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-15">
+         <i class="fas fa-times"></i>
+         <img src="img/im15.jpg" alt="">
+         <h3>Magnesio</h3>
+         <p class="class">ID: S015</p>
+         <p class="stock">150</p>
+         <div class="price">S/ 94.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-16">
+         <i class="fas fa-times"></i>
+         <img src="img/im16.jpg" alt="">
+         <h3>Zinc</h3>
+         <p class="class">ID: S016</p>
+         <p class="stock">220</p>
+         <div class="price">S/ 39.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-17">
+         <i class="fas fa-times"></i>
+         <img src="img/im17.jpg" alt="">
+         <h3>Vitamina B12</h3>
+         <p class="class">ID: S017</p>
+         <p class="stock">160</p>
+         <div class="price">S/ 59.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+     
+     <div class="preview" data-target="p-18">
+         <i class="fas fa-times"></i>
+         <img src="img/im18.jpg" alt="">
+         <h3>Probioticos</h3>
+         <p class="class">ID: S018</p>
+         <p class="stock">100</p>
+         <div class="price">S/ 93.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-19">
+         <i class="fas fa-times"></i>
+         <img src="img/im19.jpg" alt="">
+         <h3>Vitamina C</h3>
+         <p class="class">ID: S019</p>
+         <p class="stock">270</p>
+         <div class="price">S/ 29.80</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ 
+     <div class="preview" data-target="p-20">
+         <i class="fas fa-times"></i>
+         <img src="img/im20.jpg" alt="">
+         <h3>Colageno</h3>
+         <p class="class">ID: S020</p>
+         <p class="stock">140</p>
+         <div class="price">S/ 34.90</div>
+         <div class="buttons">
+            <a href="#" class="cart">Agregar al carrito</a>
+         </div>
+     </div>
+ </div>
+ 
+ <script>
+    document.querySelector('.checkout-btn').addEventListener('click', function() {
+        window.open('checkout.php', '_blank');
+    });
+</script>
+
+<div class="admin-actions">
+    <form action="aumentar_stock.php" method="POST">
+        <input type="hidden" name="product_id" value="1">
+        <label for="new_stock">Nuevo Stock:</label>
+        <input type="number" id="new_stock" name="new_stock" required>
+        <button type="submit" class="admin-button">Aumentar Stock de Paracetamol</button>
+    </form>
+
+    <form action="eliminar_medicamento.php" method="POST">
+        <label for="delete_medicine">Nombre del Medicamento:</label>
+        <input type="text" id="delete_medicine" name="delete_medicine" required>
+        <button type="submit" class="admin-button">Eliminar Medicamento</button>
+    </form>
+
+    <form action="actualizar_precio.php" method="POST">
+        <input type="hidden" name="product_id" value="1">
+        <label for="new_price">Nuevo Precio:</label>
+        <input type="number" step="0.01" id="new_price" name="new_price" required>
+        <button type="submit" class="admin-button">Actualizar Precio de Paracetamol</button>
+    </form>
+
+    <form action="mostrar_detalles.php" method="POST">
+        <input type="hidden" name="product_id" value="1">
+        <button type="submit" class="admin-button">Mostrar Detalles de Paracetamol</button>
+    </form>
+
+    <form action="agregar_medicamento.php" method="POST">
+        <label for="nombre">Nombre del Medicamento:</label>
+        <input type="text" id="nombre" name="nombre" required>
+        <br>
+        <label for="product_class">Clase del Medicamento:</label>
+        <input type="text" id="product_class" name="product_class" required>
+        <br>
+        <label for="exp_date">Fecha de Expiración:</label>
+        <input type="date" id="exp_date" name="exp_date" required>
+        <br>
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" name="stock" required>
+        <br>
+        <label for="precio">Precio:</label>
+        <input type="number" step="0.01" id="precio" name="precio" required>
+        <br>
+        <button type="submit" class="admin-button">Agregar Nuevo Medicamento</button>
+    </form>
+
+    <form action="agregar_paracetamol.php" method="POST">
+        <button type="submit" class="admin-button">Agregar Paracetamol</button>
+    </form>
+</div>
+
+
+    
+</form>
+
+    </form>
+</div>
+
+
+
+ </body>
+ </html>

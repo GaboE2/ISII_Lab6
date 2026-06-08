@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCSP</title>
+    <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style1.css">
+    <script src="script.js"></script>
+</head>
+<body>   
+<header>
+    <div class="container-hero">
+        <div class="container hero">
+            <div class="customer-support">
+                <i class="fa-solid fa-headset"></i>
+                <div class="content-customer-support">
+                    <span class="text">Soporte al cliente</span>
+                    <span class="number">123-456-7890</span>
+                </div>
+            </div>
+
+            <div class="container-logo">
+                <h1 class="logo"><a href="/">UCSP</a></h1>
+                <i class="fa-solid fa-hospital"></i>
+                <h1 class="logo"><a href="/">FARMACIA</a></h1>
+            </div>
+
+            <div class="container-icons">
+                <div class="container-user">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="user-panel" style="display: none;">
+                        <div class="user-panel-content">
+                            <button class="close-user-btn">&times;</button>
+                            <ul>
+                                <li><a href="login.html">Ingresar</a></li>
+                                <li><a href="signup.html">Crear cuenta</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-cart">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <div class="content-shopping-cart">
+                        <span class="number">(0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-panel">
+                <div class="cart-panel-content">
+                    <button class="close-cart-btn">&times;</button>
+                    <h2>Carrito:</h2>
+                    <div class="cart-items"></div>
+                    <div class="cart-summary">
+                        <p class="cart-quantity">Cantidad: <span class="total-quantity">0</span></p>
+                        <p class="cart-total">Subtotal: S/ <span class="total-price">0.00</span></p>
+                        <button class="checkout-btn">Finalizar pedido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>	
+
+        <div class="container__menu">
+
+            <div class="menu">
+                <input type="checkbox" id="check__menu">
+                <label for="check__menu" id="label__check">
+                    <i class="fas fa-bars icon__menu"></i>
+                </label>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="#" id="selected"></a></li>
+                        <li><a href="#">Paciente</a>
+                            <ul>
+                                <li><a href="registro_paciente.html">Registro de Paciente</a></li>
+                                <li><a href="historial_medico.html">Historial Medico</a></li>
+                                <li><a href="citapaciente.html">Reservar Cita</a></li>
+                                <li><a href="consultapaciente.html">Consulta</a></li>
+                                <li><a href="recetapaciente.html">Receta</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Medico</a>
+                            <ul>
+                                <li><a href="registro_doctor.html">Registro de Doctor</a></li>
+                                <li><a href="perfildoctor.html">Perfil</a></li>
+                                <li><a href="consultadoctor.html">Consulta</a></li>
+                               
+                            </ul>
+                        </li>
+                        <li><a href="farmacia.html">Farmacia</a>
+                        <li><a href="horario.html">Horario</a>    
+                        
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header> 
+    <form id="formulario" action= "php/recetas.php" method="post" onsubmit="return validarCampos();"> 
+        <h1>Receta</h1>  
+        <label for="fecha">Fecha de la Receta:</label>
+        <input type="date" id="fecha" name="fecha" required><br><br>
+
+        <label for="nombre">Id Receta:</label>
+        <input type="text" id="idr" name="idr" required><br><br>
+
+        <label for="fecha">Fecha de emisión de la receta:</label>
+        <input type="date" id="fecha" name="fecha" required><br><br>
+
+        <h1>Datos de la consulta</h1>  
+        <label for="nombre">Id Consulta:</label>
+        <input type="text" id="idconsulta" name="idconsulta" required><br><br>
+
+        <label for="fecha">Fecha de la Consulta:</label>
+        <input type="date" id="fecha" name="fecha" required><br><br>
+
+        <h1>Datos del Paciente</h1>  
+         <label for="nombre">Nombre Completo:</label>
+         <input type="text" id="nombre" name="nombre" required><br><br>
+
+         <label for="fecha">Fecha de Nacimiento:</label>
+         <input type="date" id="fecha" name="fecha" required><br><br>
+
+         <label for="nombre">ID Paciente:</label>
+         <input type="text" id="idp" name="idp" required><br><br>
+
+         <label for="contacto">Teléfono:</label>
+         <input type="text" id="contacto" name="contacto" required><br><br>
+
+         <label for="correo">Correo:</label>
+         <input type="email" id="correo" name="correo" required><br><br>
+ 
+         <h1>Datos del Médico</h1> 
+         <label for="nombre">Nombre Completo:</label>
+         <input type="text" id="nombre" name="nombre" required><br><br>
+
+         <label for="nombre">ID Médico:</label>
+         <input type="text" id="idm" name="idm" required><br><br>
+ 
+         <label for="nombre">Especialidad:</label>
+         <input type="text" id="especialidad" name="especialidad" required><br><br>
+
+         <label for="contacto">Teléfono:</label>
+         <input type="text" id="contacto" name="contacto" required><br><br>
+
+         <label for="correo">Correo:</label>
+         <input type="email" id="correo" name="correo" required><br><br>
+        
+         <h1>Farmacia Prescritos</h1> 
+         <label for="nombre">ID Medicamento:</label>
+         <input type="text" id="idme" name="idme" required><br><br>
+
+         <label for="nombre">Nombre del medicamento:</label>
+         <input type="text" id="nombremed" name="nombremed" required><br><br>
+
+        <label for="nombre">Dosis del medicamento:</label>
+        <input type="text" id="dosis" name="dosis" required><br><br>
+
+        <label for="perfil">Forma de administración del medicamento</label>
+        <textarea id="admime" name="admime" cols="50" rows="5" required></textarea><br><br>
+
+        <label for="perfil">Frecuencia de administración del medicamento</label>
+        <textarea id="frecuencia" name="frecuencia" cols="50" rows="5" required></textarea><br><br>
+        
+        <label for="perfil">Duración del tratamiento </label>
+        <textarea id="duracion" name="duracion" cols="50" rows="5" required></textarea><br><br>
+        
+        <h1>Información Adicional</h1> 
+        <label for="perfil">Notas adicionales del médico (opcional) </label>
+        <textarea id="adicionales" name="adicionales" cols="50" rows="5" required></textarea><br><br>
+        
+        <button type="submit">Enviar</button>
+    <div id="datosMostrados"></div>
+</form>
+</body>
+</html>
+
+        
+
+        
