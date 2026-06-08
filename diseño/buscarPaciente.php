@@ -1,10 +1,10 @@
 <?php
 // Parámetros de conexión a la base de datos
-$host = "localhost";
-$puerto = "3310"; 
-$usuario = "root";
-$contrasena = "";
-$nombreBaseDeDatos = "farmacia";
+$host = getenv('DB_HOST') ?: "localhost";
+$puerto = getenv('DB_PORT') ?: "3310"; 
+$usuario = getenv('DB_USER') ?: "root";
+$contrasena = getenv('DB_PASS') ?: "";
+$nombreBaseDeDatos = getenv('DB_NAME') ?: "login_db";
 
 try {
     // Crear conexión PDO con el puerto especificado
