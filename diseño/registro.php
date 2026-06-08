@@ -1,11 +1,7 @@
 <?php
-$servername = "localhost"; // Cambia esto si tu servidor no es local
-$username = "tu_usuario"; // Reemplaza con tu nombre de usuario de MySQL
-$password = "tu_contraseña"; // Reemplaza con tu contraseña de MySQL
-$dbname = "farmacia"; // Nombre de tu base de datos
-$puerto=3310;
-
-$conn = new mysqli($servername, $username, $password, $dbname,3310);
+// Importar conexión centralizada
+require_once __DIR__ . '/../php/conexion_bd.php';
+$conn = $conexion;
 
 // Verificar conexión
 if ($conn->connect_error) {

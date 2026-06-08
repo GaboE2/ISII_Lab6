@@ -1,12 +1,9 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "farmacia";
+// Importar conexión centralizada
+require_once __DIR__ . '/../php/conexion_bd.php';
 
-$puerto=3310;
-
-$conn = new mysqli($servername, $username, $password, $dbname,3310);
+// Usar la variable $conexion definida en conexion_bd.php
+$conn = $conexion;
 
 // Verificar conexión
 if ($conn->connect_error) {

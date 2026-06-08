@@ -14,7 +14,7 @@
             <directory>tests/NonFunctional</directory>
         </testsuite>
         <testsuite name="Farmacia">
-            <directory>test</directory>
+            <directory>test/tests</directory>
         </testsuite>
     </testsuites>
     <source>
