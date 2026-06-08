@@ -160,7 +160,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: 'php'
+          languages: php
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
