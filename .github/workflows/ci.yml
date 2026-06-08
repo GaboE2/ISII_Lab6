@@ -24,6 +24,20 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: login_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -54,15 +68,21 @@ jobs:
       - name: Prepare JUnit results directory
         run: mkdir -p junit
 
+      - name: Run All Tests and Coverage
+        run: vendor/bin/phpunit --configuration phpunit.xml --testdox --log-junit junit/results.xml --coverage-clover coverage.xml --coverage-html coverage-report
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASS: root
+          DB_NAME: login_db
+
       - name: Upload PHPUnit results artifact
         if: always()
         uses: actions/upload-artifact@v5
         with:
           name: test-results
           path: junit/
-
-      - name: Run All Tests and Coverage
-        run: vendor/bin/phpunit --configuration phpunit.xml --testdox --log-junit junit/results.xml --coverage-clover coverage.xml --coverage-html coverage-report
 
       - name: Validate minimum coverage
         run: |
@@ -136,7 +156,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: 'php'
+          languages: php
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
