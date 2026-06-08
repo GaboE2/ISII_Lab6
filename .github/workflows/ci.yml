@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@v3
+        uses: shivammathur/setup-php@v4
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: mysqli, pdo, pdo_mysql, xdebug
@@ -68,7 +68,7 @@ jobs:
 
       - name: Upload PHPUnit results artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-results
           path: junit/
@@ -100,7 +100,7 @@ jobs:
 
       - name: Archive coverage reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-reports
           path: coverage-report/
@@ -114,7 +114,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@v3
+        uses: shivammathur/setup-php@v4
         with:
           php-version: ${{ env.PHP_VERSION }}
           tools: composer
@@ -146,15 +146,15 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: php
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
 
   issue-management:
     name: Issue Management
@@ -168,7 +168,7 @@ jobs:
 
       - name: Create or update build/test failure issue
         if: ${{ needs.build-and-test.result == 'failure' }}
-        uses: peter-evans/create-issue@v6
+        uses: peter-evans/create-issue@v5
         with:
           title: CI build/test failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -190,7 +190,7 @@ jobs:
 
       - name: Create or update quality failure issue
         if: ${{ needs.code-quality.result == 'failure' }}
-        uses: peter-evans/create-issue@v6
+        uses: peter-evans/create-issue@v5
         with:
           title: Code quality failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -212,7 +212,7 @@ jobs:
 
       - name: Create or update security failure issue
         if: ${{ needs.codeql-analysis.result == 'failure' }}
-        uses: peter-evans/create-issue@v6
+        uses: peter-evans/create-issue@v5
         with:
           title: Security analysis failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -240,13 +240,13 @@ jobs:
 
     steps:
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: test-results
         continue-on-error: true
 
       - name: Download coverage reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: coverage-reports
         continue-on-error: true

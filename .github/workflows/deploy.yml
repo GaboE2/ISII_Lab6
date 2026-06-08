@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@v3
+        uses: shivammathur/setup-php@v4
         with:
           php-version: ${{ env.PHP_VERSION }}
           tools: composer
@@ -53,13 +53,13 @@ jobs:
           tar -czf farmacia-hospital-${{ github.sha }}.tar.gz deployment/
 
       - name: Upload deployment artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: deployment-package
           path: farmacia-hospital-${{ github.sha }}.tar.gz
 
-      - name: Deploy to remote server
-        if: ${{ github.event_name == 'workflow_dispatch' && secrets.DEPLOY_HOST && secrets.DEPLOY_USER && secrets.DEPLOY_PRIVATE_KEY && (github.event.inputs.environment == 'staging' || (github.event.inputs.environment == 'production' && github.ref == 'refs/heads/main')) }}
+      - name: Deploy to staging server
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging' }}
         uses: appleboy/scp-action@v0.1.1
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -67,7 +67,19 @@ jobs:
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT || '22' }}
           source: "deployment/*"
-          target: ${{ github.event.inputs.environment == 'production' && secrets.DEPLOY_TARGET_PATH_PRODUCTION || secrets.DEPLOY_TARGET_PATH_STAGING }}
+          target: ${{ secrets.DEPLOY_TARGET_PATH_STAGING }}
+          overwrite: true
+
+      - name: Deploy to production server
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production' && github.ref == 'refs/heads/main' }}
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          source: "deployment/*"
+          target: ${{ secrets.DEPLOY_TARGET_PATH_PRODUCTION }}
           overwrite: true
 
       - name: Deploy notification
