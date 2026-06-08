@@ -7,15 +7,9 @@ echo "<pre>";
 print_r($_POST);
 echo "</pre>";
 
-// Parámetros de conexión a la base de datos
-$host = 'localhost';
-$puerto = 3310; 
-$usuario = 'root';
-$contrasena = '';
-$nombreBaseDeDatos = 'farmacia';
-
-// Puerto
-$conn = new mysqli($host, $usuario, $contrasena, $nombreBaseDeDatos, $puerto);
+// Importar conexión centralizada
+require_once __DIR__ . '/../php/conexion_bd.php';
+$conn = $conexion;
 
 // Verificar conexión
 if ($conn->connect_error) {

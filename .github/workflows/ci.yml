@@ -160,7 +160,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: php
+          languages: 'php'
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
@@ -177,7 +177,7 @@ jobs:
 
       - name: Create or update build/test failure issue
         if: ${{ needs.build-and-test.result == 'failure' }}
-        uses: peter-evans/create-issue@v7
+        uses: peter-evans/create-issue@v5
         with:
           title: CI build/test failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -199,7 +199,7 @@ jobs:
 
       - name: Create or update quality failure issue
         if: ${{ needs.code-quality.result == 'failure' }}
-        uses: peter-evans/create-issue@v7
+        uses: peter-evans/create-issue@v5
         with:
           title: Code quality failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -221,7 +221,7 @@ jobs:
 
       - name: Create or update security failure issue
         if: ${{ needs.codeql-analysis.result == 'failure' }}
-        uses: peter-evans/create-issue@v7
+        uses: peter-evans/create-issue@v5
         with:
           title: Security analysis failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
