@@ -68,6 +68,10 @@ jobs:
       - name: Prepare JUnit results directory
         run: mkdir -p junit
 
+      - name: Initialize Database Schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot login_db < test/database.sql
+
       - name: Run All Tests and Coverage
         run: vendor/bin/phpunit --configuration phpunit.xml --testdox --log-junit junit/results.xml --coverage-clover coverage.xml --coverage-html coverage-report
         env:
@@ -173,7 +177,7 @@ jobs:
 
       - name: Create or update build/test failure issue
         if: ${{ needs.build-and-test.result == 'failure' }}
-        uses: peter-evans/create-issue@v5
+        uses: peter-evans/create-issue@v7
         with:
           title: CI build/test failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -195,7 +199,7 @@ jobs:
 
       - name: Create or update quality failure issue
         if: ${{ needs.code-quality.result == 'failure' }}
-        uses: peter-evans/create-issue@v5
+        uses: peter-evans/create-issue@v7
         with:
           title: Code quality failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
@@ -217,7 +221,7 @@ jobs:
 
       - name: Create or update security failure issue
         if: ${{ needs.codeql-analysis.result == 'failure' }}
-        uses: peter-evans/create-issue@v5
+        uses: peter-evans/create-issue@v7
         with:
           title: Security analysis failure in ${{ github.repository }} on ${{ github.ref_name }}
           body: |
