@@ -149,22 +149,27 @@ jobs:
         run: composer audit
         continue-on-error: true
 
-  codeql-analysis:
-    name: Security Analysis
-    runs-on: ubuntu-latest
+ codeql-analysis:
+  name: Security Analysis
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: php
+    - name: Setup PHP ${{ env.PHP_VERSION }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ env.PHP_VERSION }}
 
-      - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: php
 
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v3
+      
   issue-management:
     name: Issue Management
     runs-on: ubuntu-latest
