@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - develop
+      - desarrollo
   pull_request:
     branches:
       - main
       - develop
+      - desarrollo
 
 permissions:
   contents: read
