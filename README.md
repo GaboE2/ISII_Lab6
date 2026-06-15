@@ -86,3 +86,40 @@ Se agregó una capa adaptadora mínima para pruebas:
 - `tests/Unit` y `tests/Integration`: pruebas con PHPUnit y dobles.
 
 Scripts PHP actuales (`php/consultas.php`, `php/consultapaciente.php`) se mantienen como controllers delgados.
+
+## Pipeline CI/CD
+
+Este proyecto implementa un pipeline CI/CD con GitHub Actions que se ejecuta automáticamente en las ramas `main`, `develop` y `desarrollo`.
+
+### Jobs del pipeline:
+- **Build and Test**: Instala dependencias, inicializa la BD y ejecuta todas las pruebas con cobertura
+- **Code Quality**: Valida el composer.json y audita vulnerabilidades de seguridad
+- **Test Summary**: Genera un resumen de la ejecución de pruebas
+
+## Pruebas automatizadas
+
+### Pruebas Unitarias
+- `tests/Unit/ConsultaTest.php` — Entidad Consulta (DDD)
+- `tests/Unit/PacienteTest.php` — Servicio de pacientes
+- `tests/Unit/MedicoTest.php` — Servicio de médicos
+- `tests/Unit/LoginServiceTest.php` — Servicio de autenticación
+
+### Pruebas Funcionales
+- `tests/Functional/LoginFlowTest.php` — Flujo completo de login
+- `tests/Functional/RegistrarPacienteFlowTest.php` — Flujo de registro de paciente
+
+### Pruebas No Funcionales
+- `tests/NonFunctional/RegistrarPacientePerformanceTest.php` — Pruebas de rendimiento
+
+### Pruebas de Integración
+- `tests/Integration/PacienteRepositoryFakeTest.php` — Repositorio en memoria
+
+## Microservicios
+
+### ms-pacientes
+API REST para gestión de pacientes migrada del monolito al bounded context de Pacientes.
+
+### ms-citas
+API REST para gestión de citas migrada del monolito al bounded context de Citas.
+
+
