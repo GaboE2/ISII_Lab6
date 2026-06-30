@@ -7,6 +7,133 @@
 - **Sierra Huaracha Rodrigo Adolfo**
 - **Perez Flores Alyson Gisely**
 
+---
+
+## Propósito del Proyecto
+
+Sistema web para la gestión integral de la Farmacia del Hospital General de Arequipa. Permite administrar usuarios (pacientes, doctores, administradores), citas médicas, consultas, recetas, medicamentos, suplementos y pedidos, con arquitectura modular basada en DDD y pipeline CI/CD completo.
+
+---
+
+## Funcionalidades
+
+### Casos de Uso principales
+
+| Módulo | Actor | Operación |
+|---|---|---|
+| **Usuarios** | Paciente / Doctor / Admin | Registrarse, iniciar sesión, cerrar sesión |
+| **Citas** | Paciente | Reservar cita con un doctor |
+| **Citas** | Doctor | Ver y atender citas pendientes |
+| **Consultas** | Doctor | Registrar consulta médica y diagnóstico |
+| **Recetas** | Doctor | Emitir receta de medicamento durante consulta |
+| **Farmacia** | Paciente / Admin | Ver medicamentos y suplementos disponibles |
+| **Pedidos** | Paciente | Realizar pedido de medicamentos |
+| **Historial** | Paciente / Doctor | Consultar historial médico |
+
+---
+
+## Modelo de Dominio
+
+### Diagrama de Clases (Modelo Lógico)
+
+![Modelo Lógico](modelo_logico_pfinal.jpg)
+
+### Módulos de Dominio (Bounded Contexts)
+
+| Módulo | Entidades principales |
+|---|---|
+| **Usuarios** | `Usuario`, `DatosRegistroUsuario` |
+| **Citas** | `Cita`, `DatosRegistroCita` |
+| **Consultas** | `Consulta`, `Receta` |
+| **Pedidos** | `Pedido`, `DetallePedido` |
+| **Productos** | `Medicamento`, `DatosRegistroProducto` |
+
+---
+
+## Visión General de Arquitectura
+
+### Estilo arquitectónico: Monolito Modular + DDD
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    Presentación                      │
+│              (diseno/pages/*.php)                    │
+├──────────┬──────────┬──────────┬────────────────────┤
+│ Usuarios │  Citas   │Consultas │      Pedidos        │
+├──────────┼──────────┼──────────┼────────────────────┤
+│Aplicacion│Aplicacion│Aplicacion│     Aplicacion      │
+├──────────┼──────────┼──────────┼────────────────────┤
+│ Dominio  │ Dominio  │ Dominio  │      Dominio        │
+├──────────┼──────────┼──────────┼────────────────────┤
+│  Infra   │  Infra   │  Infra   │       Infra         │
+└──────────┴──────────┴──────────┴────────────────────┘
+                BD Centralizada (farmacia_db)
+```
+
+### Estructura de carpetas por módulo
+
+```
+php/
+├── Usuarios/
+│   ├── Usuario.php
+│   ├── IUsuarioRepository.php
+│   ├── UsuarioService.php
+│   └── DatosRegistroUsuario.php
+├── Citas/
+│   ├── Dominio/
+│   ├── Aplicacion/
+│   └── Infraestructura/
+├── Consultas/
+│   ├── Dominio/
+│   ├── Aplicacion/
+│   └── Infraestructura/
+├── Pedidos/
+│   ├── Dominio/
+│   ├── Aplicacion/
+│   └── Infraestructura/
+└── Productos/
+    ├── Dominio/
+    └── Aplicacion/
+```
+
+---
+
+## Módulos y Operaciones disponibles
+
+### Módulo: Usuarios
+
+| Operación | Método | URL | Parámetros |
+|---|---|---|---|
+| Registrar usuario | POST | `/php/procesar_registro.php` | `tipo_documento`, `numero_documento`, `nombres`, `apellidos`, `telefono`, `password`, `rol`, `especialidad` |
+| Iniciar sesión | POST | `/php/login.php` | `numero_documento`, `password` |
+| Cerrar sesión | GET | `/php/logout.php` | — |
+
+### Módulo: Citas
+
+| Operación | Método | URL | Parámetros |
+|---|---|---|---|
+| Crear cita | POST | `/php/procesar_cita.php` | `id_paciente`, `id_doctor`, `fecha_cita`, `hora_inicio`, `hora_fin` |
+
+### Módulo: Consultas
+
+| Operación | Método | URL | Parámetros |
+|---|---|---|---|
+| Registrar consulta | POST | `/php/procesar_consulta.php` | `id_cita`, `diagnostico`, `motivo` |
+
+### Módulo: Productos/Farmacia
+
+| Operación | Método | URL | Parámetros |
+|---|---|---|---|
+| Agregar producto | POST | `/php/procesar_agregar_producto.php` | `tipo`, `nombre`, `clase`, `stock`, `precio`, `imagen` |
+
+### Módulo: Pedidos
+
+| Operación | Método | URL | Parámetros |
+|---|---|---|---|
+| Realizar pago/pedido | POST | `/php/procesar_pago.php` | `id_usuario`, `productos`, `total`, `direccion_envio` |
+
+---
+
 ## Descripción del Proyecto
 
 ### Farmacia del Hospital General de Arequipa
