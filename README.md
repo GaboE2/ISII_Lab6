@@ -168,6 +168,63 @@ classDiagram
 
 ## Visión General de Arquitectura
 
+### Diagrama de Paquetes
+
+```mermaid
+graph TD
+    subgraph Presentacion["🖥️ Presentación (diseno/pages/)"]
+        P1[login.php]
+        P2[registro_paciente.php]
+        P3[citapaciente.php]
+        P4[consultapaciente.php]
+        P5[farmacia.php]
+        P6[index.php]
+    end
+
+    subgraph Aplicacion["⚙️ Aplicación (php/*Service.php)"]
+        A1[UsuarioService]
+        A2[CitaService]
+        A3[ConsultaService]
+        A4[PedidoService]
+    end
+
+    subgraph Dominio["🧠 Dominio (php/*.php)"]
+        D1[Usuario]
+        D2[DatosRegistroUsuario]
+        D3[Cita]
+        D4[Consulta]
+        D5[Receta]
+        D6[Pedido]
+        D7[DetallePedido]
+        D8[DocumentoYaRegistradoException]
+    end
+
+    subgraph Infraestructura["🗄️ Infraestructura (php/*Repository.php)"]
+        I1[UsuarioRepository]
+        I2[IUsuarioRepository]
+    end
+
+    subgraph BaseDatos["💾 Base de Datos"]
+        BD[(farmacia_db MySQL)]
+    end
+
+    subgraph Tests["🧪 Tests (tests/)"]
+        T1[unit/UsuarioTest.php]
+        T2[unit/UsuarioServiceTest.php]
+        T3[functional/]
+        T4[performance/]
+        T5[non-functional/]
+    end
+
+    Presentacion --> Aplicacion
+    Aplicacion --> Dominio
+    Aplicacion --> Infraestructura
+    Infraestructura --> BaseDatos
+    Tests --> Dominio
+    Tests --> Aplicacion
+```
+
+
 ### Estilo arquitectónico: Monolito Modular + DDD
 
 ```
