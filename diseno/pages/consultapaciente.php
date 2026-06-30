@@ -1,28 +1,25 @@
 <?php
 require_once __DIR__ . '/../../php/sesion.php';
 require_once __DIR__ . '/../../php/conexion_bd.php';
+require_once __DIR__ . '/../../php/Consultas/Aplicacion/ConsultaService.php';
+require_once __DIR__ . '/../../php/Consultas/Infraestructura/ConsultaRepository.php';
+require_once __DIR__ . '/../../php/Consultas/Infraestructura/RecetaRepository.php';
+
 $conn = $conexion;
+$consultaRepository = new ConsultaRepository($conn);
+$recetaRepository = new RecetaRepository($conn);
+$service = new ConsultaService($consultaRepository, $recetaRepository);
 
 // Traer las consultas reales del paciente logueado.
 $misConsultas = [];
 if ($usuarioLogueado) {
-    $idPaciente = $_SESSION['id_usuario'];
-    $sql = "SELECT c.fecha_consulta, c.motivo, c.diagnostico, u.nombres, u.apellidos, u.especialidad
-            FROM consulta c
-            INNER JOIN usuario u ON c.id_doctor = u.id
-            WHERE c.id_paciente = ?
-            ORDER BY c.fecha_consulta DESC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $idPaciente);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $misConsultas[] = $row;
-    }
-    $stmt->close();
+    $idPaciente = (int) $_SESSION['id_usuario'];
+    $misConsultas = $service->obtenerConsultasDePaciente($idPaciente);
 }
+
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
