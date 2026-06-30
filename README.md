@@ -194,12 +194,12 @@ Monolito                    Monolito Modular
 
 ### Módulos completados
 
-| Módulo | Entidad principal | Invariantes de negocio | Tests nuevos | Issue |
-|---|---|---|---|---|
-| **Usuarios** | `Usuario` | Rol válido, password obligatoria, especialidad obligatoria para doctores | (Lab 7 - refactor previo) | #40, #41 |
-| **Citas** | `Cita` | Fecha/hora obligatorias, paciente ≠ doctor, estados válidos | 9 | #43 |
-| **Consultas** | `Consulta`, `Receta` | Diagnóstico y cita obligatorios; medicamento y dosis obligatorios en receta | 9 | #44 |
-| **Pedidos** | `Pedido`, `DetallePedido` | Datos de envío obligatorios, carrito no vacío, total > 0, cantidad 1-100 | 11 | #45 |
+| Módulo | Entidad principal | Invariantes de negocio | Tests nuevos |
+|---|---|---|---|
+| **Usuarios** | `Usuario` | Rol válido, password obligatoria, especialidad obligatoria para doctores | (Lab 7 - refactor previo) |
+| **Citas** | `Cita` | Fecha/hora obligatorias, paciente ≠ doctor, estados válidos | 9 |
+| **Consultas** | `Consulta`, `Receta` | Diagnóstico y cita obligatorios; medicamento y dosis obligatorios en receta | 9 |
+| **Pedidos** | `Pedido`, `DetallePedido` | Datos de envío obligatorios, carrito no vacío, total > 0, cantidad 1-100 | 11 |
 
 ### Metodología aplicada por módulo
 1. Revisión del código legado (`procesar_*.php`) y tests funcionales existentes para extraer invariantes de negocio reales.
