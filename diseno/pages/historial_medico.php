@@ -1,10 +1,6 @@
 <?php
 require_once __DIR__ . '/../../php/sesion.php';
 require_once __DIR__ . '/../../php/conexion_bd.php';
-require_once __DIR__ . '/../../php/Consultas/Aplicacion/ConsultaService.php';
-require_once __DIR__ . '/../../php/Consultas/Infraestructura/ConsultaRepository.php';
-require_once __DIR__ . '/../../php/Consultas/Infraestructura/RecetaRepository.php';
-
 $conn = $conexion;
 
 // Solo un doctor puede ver esta página.
@@ -13,17 +9,13 @@ if (!$usuarioLogueado || $rolUsuario !== 'doctor') {
     exit();
 }
 
-$consultaRepository = new ConsultaRepository($conn);
-$recetaRepository = new RecetaRepository($conn);
-$service = new ConsultaService($consultaRepository, $recetaRepository);
-
 $pacienteEncontrado = null;
 $consultasPaciente = [];
 $dniBuscado = trim(htmlspecialchars($_GET['dni_buscar'] ?? ''));
 $mensajeError = '';
 
 if ($dniBuscado !== '') {
-    // Buscar al paciente por número de documento (responsabilidad del módulo Usuarios).
+    // Buscar al paciente por número de documento.
     $sqlPaciente = "SELECT id, nombres, apellidos, numero_documento, telefono, fecha_nacimiento
                      FROM usuario
                      WHERE numero_documento = ? AND rol = 'paciente'
@@ -37,8 +29,20 @@ if ($dniBuscado !== '') {
         $pacienteEncontrado = $resultPaciente->fetch_assoc();
         $stmt->close();
 
-        // Traer las consultas de ese paciente vía el módulo de Consultas.
-        $consultasPaciente = $service->obtenerConsultasDePaciente((int) $pacienteEncontrado['id']);
+        // Traer todas las consultas de ese paciente (con cualquier doctor).
+        $sqlConsultas = "SELECT c.fecha_consulta, c.motivo, c.diagnostico, u.nombres, u.apellidos
+                          FROM consulta c
+                          INNER JOIN usuario u ON c.id_doctor = u.id
+                          WHERE c.id_paciente = ?
+                          ORDER BY c.fecha_consulta DESC";
+        $stmtConsultas = $conn->prepare($sqlConsultas);
+        $stmtConsultas->bind_param("i", $pacienteEncontrado['id']);
+        $stmtConsultas->execute();
+        $resultConsultas = $stmtConsultas->get_result();
+        while ($row = $resultConsultas->fetch_assoc()) {
+            $consultasPaciente[] = $row;
+        }
+        $stmtConsultas->close();
     } else {
         $stmt->close();
         $mensajeError = 'No se encontró ningún paciente con ese número de documento.';
@@ -47,7 +51,6 @@ if ($dniBuscado !== '') {
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
