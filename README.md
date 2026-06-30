@@ -169,13 +169,16 @@ Migrar gradualmente el monolito de "Práctica Final" hacia una arquitectura modu
 
 Cada módulo migrado sigue la misma estructura en capas:
 
+```
 php/<Modulo>/
 ├── Dominio/          → Entidades, Value Objects, interfaces de repositorio
 ├── Aplicacion/       → Servicios que orquestan casos de uso
 └── Infraestructura/  → Implementación de repositorios (mysqli)
+```
 
 ### Diagrama de evolución (Monolito → Monolito Modular)
 
+```
 Monolito                    Monolito Modular
 ┌─────────────┐            ┌──────────┬──────────┬──────────┬──────────┐
 │ Presentación │            │ Usuarios │  Citas   │Consultas │ Pedidos  │
@@ -186,7 +189,8 @@ Monolito                    Monolito Modular
 ├─────────────┤            ├──────────┼──────────┼──────────┼──────────┤
 │ Persistencia│            │  Infra   │  Infra   │  Infra   │  Infra   │
 └─────────────┘            └──────────┴──────────┴──────────┴──────────┘
-BD Centralizada (farmacia_db)
+                                    BD Centralizada (farmacia_db)
+```
 
 ### Módulos completados
 
