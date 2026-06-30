@@ -15,6 +15,76 @@ Sistema web para la gestión integral de la Farmacia del Hospital General de Are
 
 ---
 
+## Descripción del Proyecto
+
+### Farmacia del Hospital General de Arequipa
+
+La farmacia del Hospital General se asegura de que cada aspecto de su cita, reserva, receta, etc., esté meticulosamente documentado y organizado. Esta estructuración detallada facilita la gestión eficiente de la farmacia, asegura un servicio de calidad para los pacientes y permite una colaboración fluida entre los diferentes departamentos y personal médico.
+
+## Levantamiento y Análisis de Requisitos
+
+### Departamentos
+- Cada farmacia está dividida en departamentos.
+- Para cada departamento, se desea guardar su identificador, nombre, edificio y presupuesto.
+
+### Doctores
+- Cada doctor está asignado a un departamento.
+- Para cada doctor, se almacena su identificador, nombre completo (nombres, primer apellido y segundo apellido), especialidad, edad y fecha de nacimiento.
+
+### Pacientes
+- Cada paciente está asignado a un departamento.
+- Para cada paciente, se almacena su identificador, nombre completo (nombres, primer apellido y segundo apellido), edad, fecha de nacimiento, teléfonos de contacto, dirección e historial médico.
+
+### Medicamentos
+- Cada medicamento está asignado a una clase de medicamentos.
+- Para cada medicamento, se almacena su identificador, nombre del medicamento, clase de medicamento (antiinflamatorio, antibiótico, etc.), fecha de vencimiento, stock actual y precio.
+
+### Clases de Medicamentos
+- Cada clase de medicamentos tiene varios medicamentos asociados.
+- Para cada clase de medicamentos, se almacena su identificador y nombre de la clase (antiinflamatorio, antibiótico, etc.).
+
+### Suplementos
+- Cada suplemento está asignado a un departamento.
+- Para cada suplemento, se almacena su identificador, nombre, stock actual y precio.
+
+### Prescripciones
+- Cada prescripción está asignada a un paciente y un doctor.
+- Para cada prescripción, se almacena su identificador, fecha de emisión, identificador del paciente, identificador del doctor, identificador del medicamento, dosis e instrucciones.
+
+### Consultas
+- Cada consulta está asignada a un paciente y un doctor.
+- Para cada consulta, se almacena su identificador, fecha de la consulta, identificador del paciente, identificador del doctor, motivo de la consulta y diagnóstico.
+
+### Historiales Médicos
+- Cada historial médico está asignado a un paciente.
+- Para cada historial médico, se almacena su identificador, identificador del paciente, detalles del historial y fecha del registro.
+
+### Recetas
+- Cada receta está asignada a una consulta y un medicamento.
+- Para cada receta, se almacena su identificador, identificador de la consulta, identificador del medicamento, cantidad prescrita y fecha de la receta.
+
+### Citas
+- Cada cita está asignada a un paciente y un doctor.
+- Para cada cita, se almacena su identificador, fecha de la cita, hora de inicio, hora de fin, identificador del paciente e identificador del doctor.
+
+### Proveedores
+- Cada proveedor suministra medicamentos a la farmacia.
+- Para cada proveedor, se almacena su identificador, nombre del proveedor, contacto y dirección.
+
+### Pedidos
+- Cada pedido está asignado a un proveedor y un medicamento.
+- Para cada pedido, se almacena su identificador, identificador del proveedor, fecha del pedido, identificador del medicamento, cantidad y estado del pedido.
+
+### Horarios
+- Cada farmacia tiene uno o varios horarios.
+- Para cada horario, se almacena su identificador, día, hora de inicio y hora de fin.
+
+### Horarios Asignados
+- Cada horario está asignado a un doctor y una farmacia.
+- Para cada horario asignado, se almacena su identificador, día, hora de inicio, hora de fin, identificador del doctor e identificador de la farmacia.
+
+---
+
 ## Funcionalidades
 
 ### Casos de Uso principales
@@ -271,109 +341,146 @@ php/
 
 ---
 
-## Módulos y Operaciones disponibles
 
-### Módulo: Usuarios
+## Módulos y principales servicios REST disponibles
 
-| Operación | Método | URL | Parámetros |
-|---|---|---|---|
-| Registrar usuario | POST | `/php/procesar_registro.php` | `tipo_documento`, `numero_documento`, `nombres`, `apellidos`, `telefono`, `password`, `rol`, `especialidad` |
-| Iniciar sesión | POST | `/php/login.php` | `numero_documento`, `password` |
-| Cerrar sesión | GET | `/php/logout.php` | — |
+> Documentación en formato OpenAPI 3.0. El sistema expone endpoints PHP que siguen convenciones REST.
 
-### Módulo: Citas
+```yaml
+openapi: 3.0.0
+info:
+  title: Farmacia Hospital General - API
+  version: 1.0.0
+paths:
+  /php/procesar_registro.php:
+    post:
+      summary: Registrar usuario
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                tipo_documento: { type: string }
+                numero_documento: { type: string }
+                nombres: { type: string }
+                apellidos: { type: string }
+                telefono: { type: string }
+                password: { type: string }
+                rol: { type: string, enum: [paciente, doctor, administrador] }
+                especialidad: { type: string }
+      responses:
+        "302": { description: Redirige al index si exitoso }
+        "400": { description: Datos inválidos }
 
-| Operación | Método | URL | Parámetros |
-|---|---|---|---|
-| Crear cita | POST | `/php/procesar_cita.php` | `id_paciente`, `id_doctor`, `fecha_cita`, `hora_inicio`, `hora_fin` |
+  /php/login.php:
+    post:
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                numero_documento: { type: string }
+                password: { type: string }
+      responses:
+        "302": { description: Redirige al index si exitoso }
+        "401": { description: Credenciales inválidas }
 
-### Módulo: Consultas
+  /php/logout.php:
+    get:
+      summary: Cerrar sesión
+      responses:
+        "302": { description: Redirige al login }
 
-| Operación | Método | URL | Parámetros |
-|---|---|---|---|
-| Registrar consulta | POST | `/php/procesar_consulta.php` | `id_cita`, `diagnostico`, `motivo` |
+  /php/procesar_cita.php:
+    post:
+      summary: Crear cita médica
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id_paciente: { type: integer }
+                id_doctor: { type: integer }
+                fecha_cita: { type: string, format: date }
+                hora_inicio: { type: string }
+                hora_fin: { type: string }
+      responses:
+        "302": { description: Cita registrada exitosamente }
 
-### Módulo: Productos/Farmacia
+  /php/procesar_consulta.php:
+    post:
+      summary: Registrar consulta médica
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id_cita: { type: integer }
+                diagnostico: { type: string }
+                motivo: { type: string }
+      responses:
+        "302": { description: Consulta registrada exitosamente }
 
-| Operación | Método | URL | Parámetros |
-|---|---|---|---|
-| Agregar producto | POST | `/php/procesar_agregar_producto.php` | `tipo`, `nombre`, `clase`, `stock`, `precio`, `imagen` |
+  /php/procesar_agregar_producto.php:
+    post:
+      summary: Agregar medicamento o suplemento
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tipo: { type: string, enum: [medicamento, suplemento] }
+                nombre: { type: string }
+                clase: { type: string }
+                stock: { type: integer }
+                precio: { type: number }
+                imagen: { type: string, format: binary }
+      responses:
+        "302": { description: Producto agregado exitosamente }
 
-### Módulo: Pedidos
+  /php/procesar_pago.php:
+    post:
+      summary: Realizar pedido/pago
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id_usuario: { type: integer }
+                productos: { type: string }
+                total: { type: number }
+                direccion_envio: { type: string }
+      responses:
+        "302": { description: Pedido registrado exitosamente }
+```
 
-| Operación | Método | URL | Parámetros |
-|---|---|---|---|
-| Realizar pago/pedido | POST | `/php/procesar_pago.php` | `id_usuario`, `productos`, `total`, `direccion_envio` |
+### Modelos principales (Entidades y Agregados)
+
+| Entidad | Atributos clave | Tipo |
+|---|---|---|
+| `Usuario` | tipo_documento, numero_documento, nombres, rol, especialidad | Entidad de Dominio |
+| `DatosRegistroUsuario` | todos los campos de registro | Parameter Object (DTO) |
+| `Cita` | id_paciente, id_doctor, fecha_cita, hora_inicio, hora_fin, estado | Entidad de Dominio |
+| `Consulta` | id_cita, diagnostico, motivo | Entidad de Dominio |
+| `Receta` | id_consulta, id_medicamento, dosis, instrucciones | Entidad de Dominio |
+| `Pedido` | id_usuario, direccion_envio, total, estado | Agregado Raíz |
+| `DetallePedido` | id_medicamento, cantidad, precio_unitario | Entidad de Pedido |
+| `Medicamento` | nombre, clase, stock, precio | Entidad de Dominio |
 
 ---
-
-## Descripción del Proyecto
-
-### Farmacia del Hospital General de Arequipa
-
-La farmacia del Hospital General se asegura de que cada aspecto de su cita, reserva, receta, etc., esté meticulosamente documentado y organizado. Esta estructuración detallada facilita la gestión eficiente de la farmacia, asegura un servicio de calidad para los pacientes y permite una colaboración fluida entre los diferentes departamentos y personal médico.
-
-## Levantamiento y Análisis de Requisitos
-
-### Departamentos
-- Cada farmacia está dividida en departamentos.
-- Para cada departamento, se desea guardar su identificador, nombre, edificio y presupuesto.
-
-### Doctores
-- Cada doctor está asignado a un departamento.
-- Para cada doctor, se almacena su identificador, nombre completo (nombres, primer apellido y segundo apellido), especialidad, edad y fecha de nacimiento.
-
-### Pacientes
-- Cada paciente está asignado a un departamento.
-- Para cada paciente, se almacena su identificador, nombre completo (nombres, primer apellido y segundo apellido), edad, fecha de nacimiento, teléfonos de contacto, dirección e historial médico.
-
-### Medicamentos
-- Cada medicamento está asignado a una clase de medicamentos.
-- Para cada medicamento, se almacena su identificador, nombre del medicamento, clase de medicamento (antiinflamatorio, antibiótico, etc.), fecha de vencimiento, stock actual y precio.
-
-### Clases de Medicamentos
-- Cada clase de medicamentos tiene varios medicamentos asociados.
-- Para cada clase de medicamentos, se almacena su identificador y nombre de la clase (antiinflamatorio, antibiótico, etc.).
-
-### Suplementos
-- Cada suplemento está asignado a un departamento.
-- Para cada suplemento, se almacena su identificador, nombre, stock actual y precio.
-
-### Prescripciones
-- Cada prescripción está asignada a un paciente y un doctor.
-- Para cada prescripción, se almacena su identificador, fecha de emisión, identificador del paciente, identificador del doctor, identificador del medicamento, dosis e instrucciones.
-
-### Consultas
-- Cada consulta está asignada a un paciente y un doctor.
-- Para cada consulta, se almacena su identificador, fecha de la consulta, identificador del paciente, identificador del doctor, motivo de la consulta y diagnóstico.
-
-### Historiales Médicos
-- Cada historial médico está asignado a un paciente.
-- Para cada historial médico, se almacena su identificador, identificador del paciente, detalles del historial y fecha del registro.
-
-### Recetas
-- Cada receta está asignada a una consulta y un medicamento.
-- Para cada receta, se almacena su identificador, identificador de la consulta, identificador del medicamento, cantidad prescrita y fecha de la receta.
-
-### Citas
-- Cada cita está asignada a un paciente y un doctor.
-- Para cada cita, se almacena su identificador, fecha de la cita, hora de inicio, hora de fin, identificador del paciente e identificador del doctor.
-
-### Proveedores
-- Cada proveedor suministra medicamentos a la farmacia.
-- Para cada proveedor, se almacena su identificador, nombre del proveedor, contacto y dirección.
-
-### Pedidos
-- Cada pedido está asignado a un proveedor y un medicamento.
-- Para cada pedido, se almacena su identificador, identificador del proveedor, fecha del pedido, identificador del medicamento, cantidad y estado del pedido.
-
-### Horarios
-- Cada farmacia tiene uno o varios horarios.
-- Para cada horario, se almacena su identificador, día, hora de inicio y hora de fin.
-
-### Horarios Asignados
-- Cada horario está asignado a un doctor y una farmacia.
-- Para cada horario asignado, se almacena su identificador, día, hora de inicio, hora de fin, identificador del doctor e identificador de la farmacia.
 
 
 ## Pipeline CI/CD y Gestión del Proyecto
