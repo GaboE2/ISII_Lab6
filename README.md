@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-# Proyecto a Usar ISII - Lab 6 - 30/04/2026
+
+# Proyecto final 
 
 ## Integrantes:
 
@@ -75,55 +75,65 @@ La farmacia del Hospital General se asegura de que cada aspecto de su cita, rese
 - Cada horario está asignado a un doctor y una farmacia.
 - Para cada horario asignado, se almacena su identificador, día, hora de inicio, hora de fin, identificador del doctor e identificador de la farmacia.
 
-## Estructura del Proyecto
+## Laboratorio 5: Pruebas Unitarias y Dobles de Prueba
+### Archivos creados
+
+| Archivo | Descripción |
+|---|---|
+| `php/Usuario.php` | Entidad de Dominio con invariantes de negocio |
+| `php/IUsuarioRepository.php` | Interfaz del repositorio (permite mockear en tests) |
+| `php/UsuarioService.php` | Application Service que orquesta el caso de uso de registro |
+| `tests/unit/UsuarioTest.php` | Pruebas unitarias de los invariantes de la Entidad |
+| `tests/unit/UsuarioServiceTest.php` | Pruebas del Service usando **Test Doubles (Mocks)** del repositorio |
+
+### Invariantes de Dominio (Entidad Usuario)
+Extraídos de la lógica real de `procesar_registro.php`:
+
+1. `rol` debe ser uno de: `paciente`, `doctor`, `administrador`
+2. `password` no puede estar vacía
+3. Si `rol === 'doctor'`, `especialidad` es obligatoria
+
+### Casos de prueba implementados
+
+**UsuarioTest.php** (invariantes, sin dependencias externas):
+- Crea un paciente válido correctamente
+- Crea un doctor con especialidad correctamente
+- Rol inválido lanza `InvalidArgumentException`
+- Password vacía lanza `InvalidArgumentException`
+- Doctor sin especialidad lanza `InvalidArgumentException`
+
+**UsuarioServiceTest.php** (mocking del repositorio con `createMock`):
+- Registra un usuario nuevo correctamente (mock simula que el documento no existe)
+- Lanza excepción si el número de documento ya existe (verifica que `guardar()` nunca se llama)
+- No guarda si el rol es inválido (la validación del dominio detiene el flujo antes de tocar el repositorio)
+
+### Resultados de ejecución
+
+```bash
+vendor/bin/phpunit
+```
+**156 tests, 260 assertions — OK**
+
+### Reporte de cobertura de código
+
+Generado en formato HTML con PCOV:
+
+```bash
+vendor/bin/phpunit --coverage-html reports/coverage-html
+```
+
+Disponible en `reports/coverage-html/index.html`.
+
+### Estrategia de Git (Branching)
+
+Se trabajó en una rama feature aislada, sin modificar ningún archivo existente del sistema (`procesar_registro.php`, `UsuarioRepository.php` permanecen intactos):
+
+- **PR #38**: `feature/lab04-dominio-mocking` → `desarrollo`
+- **PR #39**: `desarrollo` → `main`
+
+Todos los cambios fueron archivos **nuevos** (`create mode`), sin modificaciones (`modify`) ni eliminaciones (`delete`) sobre el código existente, garantizando cero impacto en la funcionalidad ya implementada del sistema.
+
+### Conclusión
+Se extrajo la lógica de negocio embebida en `procesar_registro.php` hacia una Entidad de Dominio con invariantes explícitas y un Application Service desacoplado de la persistencia mediante una interfaz (`IUsuarioRepository`), permitiendo probar el comportamiento de negocio de forma aislada y mediante Dobles de Prueba (Mocks), sin necesidad de una base de datos real.
 
 
-## Adaptación Lab 06 (xUnit + Mocking)
-
-Se agregó una capa adaptadora mínima para pruebas:
-- `src/Domain`: entidades e interfaces de repositorio.
-- `src/Application`: servicios de aplicación.
-- `src/Infrastructure/Persistence`: repositorios MySQLi.
-- `tests/Unit` y `tests/Integration`: pruebas con PHPUnit y dobles.
-
-Scripts PHP actuales (`php/consultas.php`, `php/consultapaciente.php`) se mantienen como controllers delgados.
-
-## Pipeline CI/CD
-
-Este proyecto implementa un pipeline CI/CD con GitHub Actions que se ejecuta automáticamente en las ramas `main`, `develop` y `desarrollo`.
-
-### Jobs del pipeline:
-- **Build and Test**: Instala dependencias, inicializa la BD y ejecuta todas las pruebas con cobertura
-- **Code Quality**: Valida el composer.json y audita vulnerabilidades de seguridad
-- **Test Summary**: Genera un resumen de la ejecución de pruebas
-
-## Pruebas automatizadas
-
-### Pruebas Unitarias
-- `tests/Unit/ConsultaTest.php` — Entidad Consulta (DDD)
-- `tests/Unit/PacienteTest.php` — Servicio de pacientes
-- `tests/Unit/MedicoTest.php` — Servicio de médicos
-- `tests/Unit/LoginServiceTest.php` — Servicio de autenticación
-
-### Pruebas Funcionales
-- `tests/Functional/LoginFlowTest.php` — Flujo completo de login
-- `tests/Functional/RegistrarPacienteFlowTest.php` — Flujo de registro de paciente
-
-### Pruebas No Funcionales
-- `tests/NonFunctional/RegistrarPacientePerformanceTest.php` — Pruebas de rendimiento
-
-### Pruebas de Integración
-- `tests/Integration/PacienteRepositoryFakeTest.php` — Repositorio en memoria
-
-## Microservicios
-
-### ms-pacientes
-API REST para gestión de pacientes migrada del monolito al bounded context de Pacientes.
-
-### ms-citas
-API REST para gestión de citas migrada del monolito al bounded context de Citas.
-
-
-=======
-prueba 
->>>>>>> importar-farmacia
