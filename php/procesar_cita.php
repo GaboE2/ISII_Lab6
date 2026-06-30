@@ -4,6 +4,10 @@ session_start();
 ob_start();
 
 require_once __DIR__ . '/conexion_bd.php';
+require_once __DIR__ . '/Citas/Aplicacion/CitaService.php';
+require_once __DIR__ . '/Citas/Infraestructura/CitaRepository.php';
+require_once __DIR__ . '/Citas/Dominio/DatosRegistroCita.php';
+
 $conn = $conexion;
 
 // Solo un paciente logueado puede reservar cita.
@@ -14,39 +18,42 @@ if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true || $_SESSION
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $id_paciente = $_SESSION['id_usuario'];
-    $id_doctor   = trim(htmlspecialchars($_POST['id_doctor'] ?? ''));
-    $fecha_cita  = trim(htmlspecialchars($_POST['fecha_cita'] ?? ''));
-    $hora_cita   = trim(htmlspecialchars($_POST['hora_cita'] ?? ''));
-    $motivo      = trim(htmlspecialchars($_POST['motivo_cita'] ?? ''));
+    $idPaciente = (int) $_SESSION['id_usuario'];
+    $idDoctor   = (int) trim(htmlspecialchars($_POST['id_doctor'] ?? ''));
+    $fechaCita  = trim(htmlspecialchars($_POST['fecha_cita'] ?? ''));
+    $horaCita   = trim(htmlspecialchars($_POST['hora_cita'] ?? ''));
+    $motivo     = trim(htmlspecialchars($_POST['motivo_cita'] ?? ''));
 
-    if ($id_doctor === '' || $fecha_cita === '' || $hora_cita === '') {
-        header("Location: /farmacia/diseno/pages/citapaciente.php?error=" . urlencode("Completa todos los campos obligatorios."));
-        exit();
-    }
+    $repository = new CitaRepository($conn);
+    $service = new CitaService($repository);
 
-    $sql = "INSERT INTO cita (id_paciente, id_doctor, fecha_cita, hora_cita, motivo, estado)
-            VALUES (?, ?, ?, ?, ?, 'pendiente')";
+    try {
+        $datos = new DatosRegistroCita(
+            idPaciente: $idPaciente,
+            idDoctor: $idDoctor,
+            fechaCita: $fechaCita,
+            horaCita: $horaCita,
+            motivo: $motivo
+        );
 
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("iisss", $id_paciente, $id_doctor, $fecha_cita, $hora_cita, $motivo);
+        $exito = $service->reservar($datos);
 
-        if ($stmt->execute()) {
-            $stmt->close();
-            $conn->close();
+        $conn->close();
+
+        if ($exito) {
             header("Location: /farmacia/diseno/pages/citapaciente.php?exito=1");
-            exit();
         } else {
-            error_log("Error al insertar cita: " . $stmt->error);
             header("Location: /farmacia/diseno/pages/citapaciente.php?error=" . urlencode("No se pudo guardar la cita."));
-            exit();
         }
-    } else {
-        error_log("Error al preparar la consulta: " . $conn->error);
-        header("Location: /farmacia/diseno/pages/citapaciente.php?error=" . urlencode("Hubo un problema con el servidor."));
+        exit();
+
+    } catch (InvalidArgumentException $e) {
+        $conn->close();
+        header("Location: /farmacia/diseno/pages/citapaciente.php?error=" . urlencode($e->getMessage()));
         exit();
     }
 }
 
 ob_end_flush();
 ?>
+
