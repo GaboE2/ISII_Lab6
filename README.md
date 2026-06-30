@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Proyecto a Usar ISII - Lab 6 - 30/04/2026
 
 ## Integrantes:
@@ -123,3 +124,6 @@ API REST para gestión de pacientes migrada del monolito al bounded context de P
 API REST para gestión de citas migrada del monolito al bounded context de Citas.
 
 
+=======
+prueba 
+>>>>>>> importar-farmacia
