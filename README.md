@@ -137,3 +137,54 @@ Todos los cambios fueron archivos **nuevos** (`create mode`), sin modificaciones
 Se extrajo la lógica de negocio embebida en `procesar_registro.php` hacia una Entidad de Dominio con invariantes explícitas y un Application Service desacoplado de la persistencia mediante una interfaz (`IUsuarioRepository`), permitiendo probar el comportamiento de negocio de forma aislada y mediante Dobles de Prueba (Mocks), sin necesidad de una base de datos real.
 
 
+## Laboratorio 8: Refactoring
+
+### Objetivo
+Identificar y corregir code smells detectados por SonarQube en la capa de dominio (`Usuario`, `UsuarioService`), aplicando refactorings estándar sin alterar el comportamiento existente (validado con TDD).
+
+### Code smells identificados
+
+| # | Code smell | Ubicación | Detección SonarQube |
+|---|------------|-----------|----------------------|
+| 1 | Long Parameter List | `php/Usuario.php` (línea 18), `php/UsuarioService.php` (línea 16) | *"This function has 9 parameters, which is greater than the 7 authorized"* |
+| 2 | Generic Exception | `php/UsuarioService.php` (línea 30) | *"Define a dedicated exception instead of using a generic one"* |
+
+### Refactorings aplicados
+
+**1. Introduce Parameter Object**
+Se creó la clase `DatosRegistroUsuario` (objeto inmutable con propiedades `readonly`) para agrupar los 9 parámetros del registro de usuario en un único objeto de transferencia de datos (DTO).
+
+- `Usuario::__construct()` ahora recibe `DatosRegistroUsuario $datos` en vez de 9 parámetros sueltos.
+- `UsuarioService::registrar()` ahora recibe `DatosRegistroUsuario $datos` en vez de 9 parámetros sueltos.
+
+**2. Replace Generic Exception with Dedicated Exception**
+Se creó `DocumentoYaRegistradoException extends RuntimeException`, lanzada específicamente cuando se intenta registrar un usuario con un número de documento ya existente, en lugar de usar `RuntimeException` genérica.
+
+### Archivos nuevos
+- `php/DatosRegistroUsuario.php`
+- `php/DocumentoYaRegistradoException.php`
+
+### Archivos modificados
+- `php/Usuario.php`
+- `php/UsuarioService.php`
+- `tests/unit/UsuarioTest.php`
+- `tests/unit/UsuarioServiceTest.php`
+
+### Metodología
+1. Se confirmó la línea base de tests en verde **antes** de refactorizar (TDD).
+2. Se aplicaron los refactorings manteniendo el comportamiento original (mismas invariantes de negocio: rol válido, password no vacía, especialidad obligatoria para doctores).
+3. Se actualizaron los tests unitarios a la nueva firma de los constructores.
+4. Se verificó que la suite completa siguiera en verde tras el cambio.
+
+### Resultado de tests
+```bash
+vendor/bin/phpunit
+# OK (156 tests, 246 assertions)
+```
+
+✅ 156/156 tests pasando, sin regresiones.
+
+### Issues y PR
+- Issue #40 — Reducir parámetros del constructor (Parameter Object) — **Closed**
+- Issue #41 — Definir excepción dedicada en UsuarioService — **Closed**
+- PR: `feature/lab07-refactor-usuario-parametros` → `desarrollo` (mergeado sin conflictos)
