@@ -63,6 +63,97 @@ graph TD
 
 ![Modelo Lógico](modelo_logico_pfinal.jpg)
 
+
+
+```mermaid
+classDiagram
+    class Usuario {
+        -string tipoDocumento
+        -string numeroDocumento
+        -string nombres
+        -string apellidos
+        -string telefono
+        -string passwordHash
+        -string rol
+        -string especialidad
+        +esDoctor() bool
+        +toArray() array
+    }
+
+    class DatosRegistroUsuario {
+        +string tipoDocumento
+        +string numeroDocumento
+        +string fechaNacimiento
+        +string nombres
+        +string apellidos
+        +string telefono
+        +string passwordPlano
+        +string rol
+        +string especialidad
+    }
+
+    class Cita {
+        -int idPaciente
+        -int idDoctor
+        -string fechaCita
+        -string horaInicio
+        -string horaFin
+        -string estado
+        +esPendiente() bool
+    }
+
+    class Consulta {
+        -int idCita
+        -string diagnostico
+        -string motivo
+    }
+
+    class Receta {
+        -int idConsulta
+        -int idMedicamento
+        -string dosis
+        -string instrucciones
+    }
+
+    class Pedido {
+        -int idUsuario
+        -string direccionEnvio
+        -float total
+        -string estado
+    }
+
+    class DetallePedido {
+        -int idMedicamento
+        -int cantidad
+        -float precioUnitario
+        +subtotal() float
+    }
+
+    class Medicamento {
+        -string nombre
+        -string clase
+        -int stock
+        -float precio
+    }
+
+    class IUsuarioRepository {
+        <<interface>>
+        +guardar(Usuario) bool
+        +buscarPorDocumento(string) array
+    }
+
+    Usuario --> DatosRegistroUsuario : se crea con
+    Cita --> Usuario : paciente
+    Cita --> Usuario : doctor
+    Consulta --> Cita : pertenece a
+    Receta --> Consulta : emitida en
+    Receta --> Medicamento : indica
+    Pedido --> Usuario : realizado por
+    DetallePedido --> Pedido : parte de
+    DetallePedido --> Medicamento : contiene
+    IUsuarioRepository ..> Usuario : gestiona
+```
+
 ### Módulos de Dominio (Bounded Contexts)
 
 | Módulo | Entidades principales |
