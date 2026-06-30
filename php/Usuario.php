@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/DatosRegistroUsuario.php';
+
 class Usuario
 {
     private const ROLES_VALIDOS = ['paciente', 'doctor', 'administrador'];
@@ -15,38 +17,29 @@ class Usuario
     private string $rol;
     private ?string $especialidad;
 
-    public function __construct(
-        string $tipoDocumento,
-        string $numeroDocumento,
-        string $fechaNacimiento,
-        string $nombres,
-        string $apellidos,
-        string $telefono,
-        string $passwordPlano,
-        string $rol,
-        ?string $especialidad = null
-    ) {
-        if (!in_array($rol, self::ROLES_VALIDOS, true)) {
-            throw new InvalidArgumentException("Tipo de cuenta inválido: {$rol}");
+    public function __construct(DatosRegistroUsuario $datos)
+    {
+        if (!in_array($datos->rol, self::ROLES_VALIDOS, true)) {
+            throw new InvalidArgumentException("Tipo de cuenta inválido: {$datos->rol}");
         }
 
-        if (trim($passwordPlano) === '') {
+        if (trim($datos->passwordPlano) === '') {
             throw new InvalidArgumentException("La contraseña es obligatoria.");
         }
 
-        if ($rol === 'doctor' && (empty($especialidad) || trim($especialidad) === '')) {
+        if ($datos->rol === 'doctor' && (empty($datos->especialidad) || trim($datos->especialidad) === '')) {
             throw new InvalidArgumentException("La especialidad es obligatoria para doctores.");
         }
 
-        $this->tipoDocumento = $tipoDocumento;
-        $this->numeroDocumento = $numeroDocumento;
-        $this->fechaNacimiento = $fechaNacimiento;
-        $this->nombres = $nombres;
-        $this->apellidos = $apellidos;
-        $this->telefono = $telefono;
-        $this->passwordHash = password_hash($passwordPlano, PASSWORD_DEFAULT);
-        $this->rol = $rol;
-        $this->especialidad = ($rol === 'doctor') ? $especialidad : null;
+        $this->tipoDocumento = $datos->tipoDocumento;
+        $this->numeroDocumento = $datos->numeroDocumento;
+        $this->fechaNacimiento = $datos->fechaNacimiento;
+        $this->nombres = $datos->nombres;
+        $this->apellidos = $datos->apellidos;
+        $this->telefono = $datos->telefono;
+        $this->passwordHash = password_hash($datos->passwordPlano, PASSWORD_DEFAULT);
+        $this->rol = $datos->rol;
+        $this->especialidad = ($datos->rol === 'doctor') ? $datos->especialidad : null;
     }
 
     public function getTipoDocumento(): string { return $this->tipoDocumento; }
@@ -64,7 +57,6 @@ class Usuario
         return $this->rol === 'doctor';
     }
 
-    /** Convierte la entidad al array que espera la capa de persistencia */
     public function toArray(): array
     {
         return [

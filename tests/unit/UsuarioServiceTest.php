@@ -4,6 +4,8 @@ use PHPUnit\Framework\TestCase;
 require_once __DIR__ . '/../../php/Usuario.php';
 require_once __DIR__ . '/../../php/IUsuarioRepository.php';
 require_once __DIR__ . '/../../php/UsuarioService.php';
+require_once __DIR__ . '/../../php/DatosRegistroUsuario.php';
+require_once __DIR__ . '/../../php/DocumentoYaRegistradoException.php';
 
 class UsuarioServiceTest extends TestCase
 {
@@ -14,7 +16,7 @@ class UsuarioServiceTest extends TestCase
         $repoMock->expects($this->once())
                  ->method('buscarPorDocumento')
                  ->with('99999999')
-                 ->willReturn(null); // no existe aún
+                 ->willReturn(null);
 
         $repoMock->expects($this->once())
                  ->method('guardar')
@@ -22,16 +24,16 @@ class UsuarioServiceTest extends TestCase
 
         $service = new UsuarioService($repoMock);
 
-        $resultado = $service->registrar(
+        $resultado = $service->registrar(new DatosRegistroUsuario(
             'DNI', '99999999', '2000-01-01',
             'Test', 'Paciente', '999000000',
             '123456', 'paciente'
-        );
+        ));
 
         $this->assertTrue($resultado);
     }
 
-    public function test_lanza_excepcion_si_documento_ya_existe()
+    public function test_lanza_excepcion_dedicada_si_documento_ya_existe()
     {
         $repoMock = $this->createMock(IUsuarioRepository::class);
 
@@ -39,20 +41,19 @@ class UsuarioServiceTest extends TestCase
                  ->method('buscarPorDocumento')
                  ->willReturn(['id' => 1, 'numero_documento' => '99999999']);
 
-        // guardar() NUNCA debe llamarse si el documento ya existe
         $repoMock->expects($this->never())
                  ->method('guardar');
 
         $service = new UsuarioService($repoMock);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Ya existe un usuario');
+        $this->expectException(DocumentoYaRegistradoException::class);
+        $this->expectExceptionMessage('Ya existe un usuario registrado con el documento: 99999999');
 
-        $service->registrar(
+        $service->registrar(new DatosRegistroUsuario(
             'DNI', '99999999', '2000-01-01',
             'Test', 'Paciente', '999000000',
             '123456', 'paciente'
-        );
+        ));
     }
 
     public function test_no_guarda_si_rol_es_invalido()
@@ -66,11 +67,12 @@ class UsuarioServiceTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        $service->registrar(
+        $service->registrar(new DatosRegistroUsuario(
             'DNI', '88888888', '2000-01-01',
             'Test', 'Invalido', '999000000',
             '123456', 'rol_que_no_existe'
-        );
+        ));
     }
 }
+
 
