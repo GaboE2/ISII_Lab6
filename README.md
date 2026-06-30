@@ -136,6 +136,87 @@ Todos los cambios fueron archivos **nuevos** (`create mode`), sin modificaciones
 ### Conclusión
 Se extrajo la lógica de negocio embebida en `procesar_registro.php` hacia una Entidad de Dominio con invariantes explícitas y un Application Service desacoplado de la persistencia mediante una interfaz (`IUsuarioRepository`), permitiendo probar el comportamiento de negocio de forma aislada y mediante Dobles de Prueba (Mocks), sin necesidad de una base de datos real.
 
+## Práctica 7: Rediseño
+
+### Objetivo
+Migrar gradualmente el monolito de "Práctica Final" hacia una arquitectura modular basada en Domain-Driven Design (DDD), aplicando principios SOLID y TDD, separando cada módulo en capas de Dominio, Aplicación e Infraestructura.
+
+### Lenguaje Ubicuo
+
+| Término | Significado en el dominio |
+|---|---|
+| **Usuario** | Persona registrada en el sistema; puede tener rol paciente, doctor o administrador |
+| **Cita** | Reserva de un paciente con un doctor en una fecha/hora específica; estados: pendiente, atendida, cancelada |
+| **Consulta** | Atención médica registrada por un doctor a partir de una cita; incluye diagnóstico |
+| **Receta** | Indicación de un medicamento (dosis, instrucciones) emitida durante una consulta |
+| **Medicamento** | Producto farmacéutico con stock y precio, vendido en el módulo de Farmacia |
+| **Pedido** | Compra realizada por un usuario, compuesta por uno o más DetallePedido |
+| **DetallePedido** | Línea de un pedido: producto, cantidad, precio unitario, subtotal |
+| **Doctor** | Usuario con rol doctor; tiene especialidad obligatoria |
+| **Paciente** | Usuario con rol paciente; puede reservar citas, recibir consultas y recetas |
+
+### Módulos identificados (Bounded Contexts)
+
+| Módulo | Entidades de Dominio | Depende de |
+|---|---|---|
+| **Usuarios** | `Usuario`, `DatosRegistroUsuario` | — |
+| **Citas** | `Cita`, `DatosRegistroCita` | Usuarios (paciente, doctor) |
+| **Consultas** | `Consulta`, `Receta` | Citas (valida cita del doctor), Usuarios (búsqueda por DNI) |
+| **Pedidos** | `Pedido`, `DetallePedido` | Usuarios (id_usuario), Medicamentos (stock) |
+| **Productos/Farmacia** | *(pendiente de migrar)* | — |
+
+### Arquitectura por módulo
+
+Cada módulo migrado sigue la misma estructura en capas:
+
+php/<Modulo>/
+├── Dominio/          → Entidades, Value Objects, interfaces de repositorio
+├── Aplicacion/       → Servicios que orquestan casos de uso
+└── Infraestructura/  → Implementación de repositorios (mysqli)
+
+### Diagrama de evolución (Monolito → Monolito Modular)
+
+Monolito                    Monolito Modular
+┌─────────────┐            ┌──────────┬──────────┬──────────┬──────────┐
+│ Presentación │            │ Usuarios │  Citas   │Consultas │ Pedidos  │
+├─────────────┤            ├──────────┼──────────┼──────────┼──────────┤
+│ Aplicación  │     →      │Aplicación│Aplicación│Aplicación│Aplicación│
+├─────────────┤            ├──────────┼──────────┼──────────┼──────────┤
+│ Dominio     │            │ Dominio  │ Dominio  │ Dominio  │ Dominio  │
+├─────────────┤            ├──────────┼──────────┼──────────┼──────────┤
+│ Persistencia│            │  Infra   │  Infra   │  Infra   │  Infra   │
+└─────────────┘            └──────────┴──────────┴──────────┴──────────┘
+BD Centralizada (farmacia_db)
+
+### Módulos completados
+
+| Módulo | Entidad principal | Invariantes de negocio | Tests nuevos | Issue |
+|---|---|---|---|---|
+| **Usuarios** | `Usuario` | Rol válido, password obligatoria, especialidad obligatoria para doctores | (Lab 7 - refactor previo) | #40, #41 |
+| **Citas** | `Cita` | Fecha/hora obligatorias, paciente ≠ doctor, estados válidos | 9 | #43 |
+| **Consultas** | `Consulta`, `Receta` | Diagnóstico y cita obligatorios; medicamento y dosis obligatorios en receta | 9 | #44 |
+| **Pedidos** | `Pedido`, `DetallePedido` | Datos de envío obligatorios, carrito no vacío, total > 0, cantidad 1-100 | 11 | #45 |
+
+### Metodología aplicada por módulo
+1. Revisión del código legado (`procesar_*.php`) y tests funcionales existentes para extraer invariantes de negocio reales.
+2. TDD: tests unitarios de la entidad de dominio (rojo) antes de implementarla (verde).
+3. Implementación de capas: Dominio → Infraestructura → Aplicación.
+4. Migración de `procesar_*.php` y vistas para usar el nuevo servicio.
+5. Verificación de la suite completa antes de cada commit.
+6. Cada módulo se desarrolló en su propia rama feature, con su propio Issue, commit vinculado y Pull Request hacia `desarrollo`.
+
+### Resultado de tests acumulado
+```bash
+vendor/bin/phpunit
+# OK (185 tests, 331 assertions)
+```
+
+### Dependencias entre módulos
+- **Citas** depende de **Usuarios** (paciente y doctor son usuarios).
+- **Consultas** depende de **Citas** y de **Usuarios** (búsqueda de paciente por DNI).
+- **Pedidos** depende de **Usuarios** y de **Medicamentos/Productos** (reducción de stock).
+  
+
 
 ## Laboratorio 8: Refactoring
 
