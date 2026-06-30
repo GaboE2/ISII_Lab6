@@ -30,6 +30,31 @@ Sistema web para la gestión integral de la Farmacia del Hospital General de Are
 | **Pedidos** | Paciente | Realizar pedido de medicamentos |
 | **Historial** | Paciente / Doctor | Consultar historial médico |
 
+
+```mermaid
+graph TD
+    Paciente((Paciente))
+    Doctor((Doctor))
+    Admin((Administrador))
+
+    Paciente --> UC1[Registrarse]
+    Paciente --> UC2[Iniciar sesión]
+    Paciente --> UC3[Reservar cita]
+    Paciente --> UC4[Ver medicamentos]
+    Paciente --> UC5[Realizar pedido]
+    Paciente --> UC6[Ver historial médico]
+
+    Doctor --> UC2
+    Doctor --> UC7[Ver citas pendientes]
+    Doctor --> UC8[Registrar consulta]
+    Doctor --> UC9[Emitir receta]
+    Doctor --> UC6
+
+    Admin --> UC2
+    Admin --> UC10[Agregar medicamento/suplemento]
+    Admin --> UC11[Gestionar usuarios]
+```
+
 ---
 
 ## Modelo de Dominio
