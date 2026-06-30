@@ -75,6 +75,191 @@ La farmacia del Hospital General se asegura de que cada aspecto de su cita, rese
 - Cada horario está asignado a un doctor y una farmacia.
 - Para cada horario asignado, se almacena su identificador, día, hora de inicio, hora de fin, identificador del doctor e identificador de la farmacia.
 
+
+## Pipeline CI/CD y Gestión del Proyecto
+
+### 1. Repositorio de Software
+
+Flujo de trabajo Git (Gitflow):
+
+- **`main`** — rama estable de producción
+- **`desarrollo`** — rama de integración continua
+- **`feature/*`** — una rama por cada laboratorio/módulo
+
+Flujo de mezclas:
+```
+feature/* → desarrollo → main
+```
+
+Ramas feature del proyecto:
+- `feature/lab07-refactor-usuario-parametros`
+- `feature/lab08-rediseno-modular-citas`
+- `feature/lab08-rediseno-modular-consultas`
+- `feature/lab08-rediseno-modular-pagos`
+- `feature/lab08-rediseno-modular-productos`
+
+---
+
+### 2. Pipeline CI/CD
+
+Pipeline implementado en **Jenkins** (local) y **GitHub Actions** (remoto), disparado automáticamente por eventos de `push` y `pull_request` sobre la rama `main`:
+
+```yaml
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+```
+
+Etapas del pipeline:
+
+| # | Etapa | Herramienta |
+|---|-------|-------------|
+| 1 | Construcción Automática | PHP lint + Composer + npm |
+| 2 | Análisis Estático | SonarQube + SonarScanner |
+| 3 | Pruebas Unitarias | PHPUnit + PCOV |
+| 4 | Pruebas Funcionales | Newman/Postman |
+| 5 | Pruebas de Seguridad | OWASP ZAP |
+| 6 | Pruebas de Rendimiento | JMeter |
+| 7 | Gestión de Issues | GitHub Issues |
+| 8 | Despliegue | Docker Compose |
+
+---
+
+### 3. Construcción Automática
+
+```bash
+# Validación de sintaxis PHP
+find php/ -name "*.php" -exec php -l {} \;
+
+# Gestión de dependencias
+composer install --no-interaction --prefer-dist
+npm install
+
+# Empaquetado
+zip -r farmacia-sistema-prod.zip php/ diseno/ database/ composer.json package.json
+docker compose up --build -d
+```
+
+---
+
+### 4. Análisis Estático de Código
+
+Herramienta: **SonarQube** integrado con Jenkins via `withSonarQubeEnv`.
+
+- Detecta: code smells, bugs y vulnerabilidades
+- Entrada: reporte de cobertura `reports/coverage.xml` generado por PHPUnit + PCOV
+- Configuración: `sonar.projectKey=FARMACIA`
+
+---
+
+### 5. Pruebas Unitarias
+
+Framework: **PHPUnit 10.5** con **PCOV** para cobertura de código.
+
+```bash
+vendor/bin/phpunit
+# OK (185 tests, 331 assertions)
+```
+
+Tipos de pruebas implementadas:
+
+| Suite | Descripción |
+|---|---|
+| `tests/unit/` | Pruebas de Dominio puras (sin BD) con Mocking |
+| `tests/functional/` | Pruebas de integración con BD real |
+
+Uso de **Test Doubles (Mocks)**:
+```php
+$repoMock = $this->createMock(IProductoRepository::class);
+$repoMock->method('existeNombre')->willReturn(false);
+$repoMock->method('guardar')->willReturn(42);
+$service = new ProductoService($repoMock);
+```
+
+Reporte de cobertura generado en `reports/coverage.xml`.
+
+---
+
+### 6. Pruebas Funcionales
+
+Herramienta: **Newman/Postman** + **PHPUnit** (suite funcional).
+
+```bash
+newman run tests/functional/farmacia_postman_collection.json --reporters cli
+```
+
+13 archivos de pruebas funcionales cubriendo: Citas, Consultas, Medicamentos, Pedidos, Recetas, Roles, Usuarios, Validaciones, Reportes, entre otros.
+
+---
+
+### 7. Pruebas de Rendimiento
+
+Herramienta: **Apache JMeter 5.6.3** integrado con Jenkins.
+
+```bash
+jmeter.bat -n -t tests/performance/farmacia_jmeter.jmx \
+  -l reports/jmeter-results.jtl \
+  -e -o reports/jmeter-html
+```
+
+Reporte HTML disponible en `reports/jmeter-html/index.html`.
+
+---
+
+### 8. Pruebas de Seguridad
+
+Herramienta: **OWASP ZAP 2.17.0** integrado con Jenkins y GitHub Actions.
+
+```bash
+# Jenkins
+java -jar zap-2.17.0.jar -cmd -quickurl http://localhost/farmacia/... \
+  -quickout reports/zap-report.html
+
+# GitHub Actions
+uses: zaproxy/action-baseline@v0.14.0
+```
+
+Reporte HTML disponible en `reports/zap-report.html`.
+
+---
+
+### 9. Gestión de Cambios (Issues)
+
+Plataforma: **GitHub Projects** con flujo de seguimiento:
+
+```
+TO-DO → CURRENT ITERATION → IN PROGRESS → FIX VALIDATION → DONE
+```
+
+- 37 issues completados (DONE)
+- Cada issue vinculado a su commit: `fix #N` / `Closes #N`
+- Etiquetas: `redesign`, `enhancement`, `bug`
+
+---
+
+### 10. Gestión de Entrega (Despliegue)
+
+Despliegue automático al final del pipeline con **Docker Compose**:
+
+```bash
+docker compose down
+docker compose up --build -d
+docker compose ps
+```
+
+Servicios desplegados:
+
+| Servicio | Imagen | Puerto |
+|---|---|---|
+| `web` | PHP 8.1 + Apache | 8081:80 |
+| `db` | MySQL 5.7 | 3307:3306 |
+
+Artefacto de entrega: `farmacia-sistema-prod.zip` (archivado automáticamente en Jenkins y GitHub Actions).
+
+
+
 ## Laboratorio 5: Pruebas Unitarias y Dobles de Prueba
 ### Archivos creados
 
