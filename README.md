@@ -9,6 +9,21 @@
 
 ---
 
+## Índice
+1. [Propósito del Proyecto](#propósito-del-proyecto)
+2. [Descripción del Proyecto](#descripción-del-proyecto)
+3. [Funcionalidades](#funcionalidades)
+4. [Modelo de Dominio](#modelo-de-dominio)
+5. [Visión General de Arquitectura](#visión-general-de-arquitectura)
+6. [Módulos y Servicios REST disponibles](#módulos-y-principales-servicios-rest-disponibles)
+7. [Pipeline CI/CD](#pipeline-cicd-y-gestión-del-proyecto)
+8. [Laboratorio 5 — Pruebas Unitarias y Dobles de Prueba](#laboratorio-5-pruebas-unitarias-y-dobles-de-prueba)
+9. [Práctica 7 — Rediseño](#práctica-7-rediseño)
+10. [Laboratorio 8 — Refactoring](#laboratorio-8-refactoring)
+
+---
+
+
 ## Propósito del Proyecto
 
 Sistema web para la gestión integral de la Farmacia del Hospital General de Arequipa. Permite administrar usuarios (pacientes, doctores, administradores), citas médicas, consultas, recetas, medicamentos, suplementos y pedidos, con arquitectura modular basada en DDD y pipeline CI/CD completo.
