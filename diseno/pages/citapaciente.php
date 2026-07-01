@@ -1,25 +1,38 @@
 <?php
 require_once __DIR__ . '/../../php/sesion.php';
 require_once __DIR__ . '/../../php/conexion_bd.php';
-require_once __DIR__ . '/../../php/Citas/Aplicacion/CitaService.php';
-require_once __DIR__ . '/../../php/Citas/Infraestructura/CitaRepository.php';
-
 $conn = $conexion;
-$repository = new CitaRepository($conn);
-$service = new CitaService($repository);
 
 // Traer la lista de doctores reales (incluyendo su especialidad).
-$doctores = $service->obtenerDoctoresDisponibles();
+$doctores = [];
+$sqlDoctores = "SELECT id, nombres, apellidos, especialidad FROM usuario WHERE rol = 'doctor' ORDER BY nombres ASC";
+$resultDoctores = $conn->query($sqlDoctores);
+while ($row = $resultDoctores->fetch_assoc()) {
+    $doctores[] = $row;
+}
 
 // Traer las próximas citas del paciente logueado.
 $misCitas = [];
 if ($usuarioLogueado) {
-    $idPaciente = (int) $_SESSION['id_usuario'];
-    $misCitas = $service->obtenerProximasCitasDePaciente($idPaciente);
+    $idPaciente = $_SESSION['id_usuario'];
+    $sqlCitas = "SELECT c.fecha_cita, c.hora_cita, u.nombres, u.apellidos, u.especialidad
+                 FROM cita c
+                 INNER JOIN usuario u ON c.id_doctor = u.id
+                 WHERE c.id_paciente = ? AND c.estado = 'pendiente'
+                 ORDER BY c.fecha_cita ASC, c.hora_cita ASC";
+    $stmt = $conn->prepare($sqlCitas);
+    $stmt->bind_param("i", $idPaciente);
+    $stmt->execute();
+    $resultCitas = $stmt->get_result();
+    while ($row = $resultCitas->fetch_assoc()) {
+        $misCitas[] = $row;
+    }
+    $stmt->close();
 }
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
