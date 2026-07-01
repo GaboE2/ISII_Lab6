@@ -6,7 +6,7 @@ ob_start();
 require_once __DIR__ . '/conexion_bd.php';
 $conn = $conexion;
 
-// Solo un paciente logueado puede reservar cita.
+// Solo un paciente logueado puede reservar cita
 if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true || $_SESSION['rol'] !== 'paciente') {
     header("Location: /farmacia/diseno/pages/login.html?error=" . urlencode("Debes iniciar sesión como paciente."));
     exit();
