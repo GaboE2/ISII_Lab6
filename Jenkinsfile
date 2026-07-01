@@ -16,7 +16,7 @@ pipeline {
                 bat 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
                 bat 'npm install'
                 bat 'composer install --no-interaction --prefer-dist'
-                echo '✅ Construcción completada.'
+                echo ' Construcción completada.'
             }
         }
         
@@ -25,7 +25,7 @@ pipeline {
                 echo '══ ETAPA: Preparando Base de Datos ══'
                 bat 'C:\\xampp\\mysql\\bin\\mysql -u root -e "DROP DATABASE IF EXISTS farmacia_db;"'
                 bat 'C:\\xampp\\mysql\\bin\\mysql -u root < database\\farmacia_db.sql'
-                echo '✅ Base de datos preparada.'
+                echo ' Base de datos preparada.'
             }
         }
 
@@ -35,11 +35,11 @@ pipeline {
                 echo '══ ETAPA 3: Pruebas Unitarias con PHPUnit ══'
                 bat 'if not exist reports mkdir reports'
                 bat '.\\vendor\\bin\\phpunit --testdox --colors=always --coverage-clover reports\\coverage.xml'
-                echo '✅ Pruebas unitarias completadas.'
+                echo ' Pruebas unitarias completadas.'
             }
             post {
                 failure {
-                    echo '❌ Pruebas unitarias fallidas. Revise los logs.'
+                    echo ' Pruebas unitarias fallidas. Revise los logs.'
                 }
             }
         }
@@ -62,7 +62,7 @@ pipeline {
                         """
                     }
                 }
-                echo '✅ Análisis SonarQube completado.'
+                echo ' Análisis SonarQube completado.'
             }
         }
 
@@ -70,7 +70,7 @@ pipeline {
             steps {
                 echo '══ ETAPA 4: Pruebas Funcionales con Newman/Postman ══'
                 bat 'newman run tests\\functional\\farmacia_postman_collection.json --reporters cli'
-                echo '✅ Pruebas funcionales con Postman/Newman completadas.'
+                echo ' Pruebas funcionales con Postman/Newman completadas.'
             }
         }
 
@@ -85,7 +85,7 @@ pipeline {
                     cd "C:\\Program Files\\ZAP\\Zed Attack Proxy"
                     java -Xmx512m -jar zap-2.17.0.jar -cmd -port 8090 -dir "%WORKSPACE%\\zap-home" -quickurl http://localhost/farmacia/diseno/pages/index.php -quickout "%WORKSPACE%\\reports\\zap-report.html" -quickprogress
                 '''
-                echo '✅ Escaneo OWASP ZAP completado.'
+                echo ' Escaneo OWASP ZAP completado.'
             }
             post {
                 always {
