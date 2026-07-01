@@ -874,7 +874,7 @@ vendor/bin/phpunit
 # OK (156 tests, 246 assertions)
 ```
 
-✅ 156/156 tests pasando, sin regresiones.
+156/156 tests pasando, sin regresiones.
 
 ### Issues y PR
 - Issue #40 — Reducir parámetros del constructor (Parameter Object) — **Closed**
