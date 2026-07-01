@@ -1,30 +1,25 @@
 <?php
 require_once __DIR__ . '/../../php/sesion.php';
 require_once __DIR__ . '/../../php/conexion_bd.php';
+require_once __DIR__ . '/../../php/Consultas/Aplicacion/ConsultaService.php';
+require_once __DIR__ . '/../../php/Consultas/Infraestructura/ConsultaRepository.php';
+require_once __DIR__ . '/../../php/Consultas/Infraestructura/RecetaRepository.php';
+
 $conn = $conexion;
+$consultaRepository = new ConsultaRepository($conn);
+$recetaRepository = new RecetaRepository($conn);
+$service = new ConsultaService($consultaRepository, $recetaRepository);
 
 // Traer las recetas reales del paciente logueado.
 $misRecetas = [];
 if ($usuarioLogueado) {
-    $idPaciente = $_SESSION['id_usuario'];
-    $sql = "SELECT r.dosis, r.instrucciones, c.fecha_consulta, m.nombre AS nombre_medicamento, u.nombres, u.apellidos
-            FROM receta r
-            INNER JOIN consulta c ON r.id_consulta = c.id
-            INNER JOIN medicamento m ON r.id_medicamento = m.id
-            INNER JOIN usuario u ON c.id_doctor = u.id
-            WHERE c.id_paciente = ?
-            ORDER BY c.fecha_consulta DESC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $idPaciente);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $misRecetas[] = $row;
-    }
-    $stmt->close();
+    $idPaciente = (int) $_SESSION['id_usuario'];
+    $misRecetas = $service->obtenerRecetasDePaciente($idPaciente);
 }
+
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
